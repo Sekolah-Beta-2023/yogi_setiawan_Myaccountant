@@ -11,7 +11,7 @@ Untuk melihat jika ada update dan full source: https://github.com/yogiset/myacco
 3. Database : PostgreSQL
 
 ## Fitur Tersedia
-1. Register, Login, Logout, ForgotPassword,ChangePassword
+1. Register with email verification, Login, Logout, ForgotPassword check email,ChangePassword. ( if u want to run Java Back End, dont forget to changes smtp)
 2. menampilkan user login
 3. Upload, melihat, mengedit, dan menghapus Karyawan
 4. Upload, melihat, mengedit, dan menghapus Barang
