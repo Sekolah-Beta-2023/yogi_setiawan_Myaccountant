@@ -18,7 +18,7 @@ To see if there is an update and full source: https://github.com/yogiset/myaccou
 ## Features
 1. Register with email verification, Login, Logout, ForgotPassword check email,ChangePassword. ( if u want to run Java Back End, dont forget to changes smtp)
 2. Show current user login
-3. Upload, show data from barang, edit, and delete data from karyawan
+3. Upload, show data from karyawan, edit, and delete data from karyawan
 4. Upload, show data from barang, edit, and delete data from barang
 5. Searching & filtering (nama,jabatan,jenis barang)
 
