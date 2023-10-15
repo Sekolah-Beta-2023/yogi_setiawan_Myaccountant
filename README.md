@@ -11,7 +11,7 @@ To see if there is an update and full source: https://github.com/yogiset/myaccou
    or check my repo with name "MyAccountant-BackEnd-0.0.1-SNAPSHOT.jar"
    if you want to run jar file dont forget to download and instal java from [https://www.oracle.com/java/technologies/downloads/](https://www.oracle.com/java/technologies/downloads/)
    you can run .jar by typing to your terminal/command prompt "java -jar example.jar".
-   if you want to run from my repo back end, dont forget to instal maven to your text editor and dont forget to changes smtp because my smtp is testing smtp it wont work for your real email,
+   if you want to run from my repo back end, dont forget to instal maven and java jdk 17 or better version to your text editor and dont forget to changes smtp because my smtp is testing smtp it wont work for your real email,
    also make sure your database name, username and password from postgres.   
 4. Database : PostgreSQL
 
