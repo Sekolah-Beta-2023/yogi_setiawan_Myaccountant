@@ -77,7 +77,7 @@ import Notification from '~/components/Notification'
 import NotificationEmail from '~/components/NotificationEmail'
 
 export default {
-middleware: 'guest',    
+    
   components: {
     Notification,
     NotificationEmail,

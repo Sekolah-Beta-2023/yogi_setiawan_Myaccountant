@@ -36,7 +36,7 @@ Don't have an account? <nuxt-link to="/register">Register</nuxt-link>
 import Notification from '~/components/Notification'
 import NotificationEmail from '~/components/NotificationEmail'
 export default {
-middleware: 'guest',    
+    
 components: {
     Notification,
     NotificationEmail,

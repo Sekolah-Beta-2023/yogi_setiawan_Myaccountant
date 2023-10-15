@@ -16,7 +16,7 @@
 import jwt_decode from 'jwt-decode';
 import { mapGetters } from 'vuex'
 export default {
-middleware: 'auth',  
+ middleware: 'auth',
   data() {
     return {
       username: '',

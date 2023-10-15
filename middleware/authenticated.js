@@ -1,6 +1,6 @@
-export default function ({ $auth, redirect }) {
-    // If the user is not authenticated
-    if ($auth.authenticated) {
-      return redirect()
-    } else {return redirect('/login') }
+export default function ({ store, redirect }) {
+  // If the user is not authenticated
+  if (!store.state.authenticated) {
+    return redirect('/login')
   }
+}
