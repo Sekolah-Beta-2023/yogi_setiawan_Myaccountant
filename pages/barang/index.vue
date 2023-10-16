@@ -4,7 +4,6 @@
     <div class="container">
       <div class="title border-bottom d-flex align-items-center py-2">
         <h5>Inventaris</h5>
-
         <div class="d-flex align-items-center ms-auto">
           <!-- /* Form input pencarian */ -->
           <input
@@ -45,12 +44,10 @@
           </div>
           <!-- /* Jika isCreating == false maka tombol Add Artikel tidak akan tampil */
 /* isCreating = !isCreating berfungsi sebagai switcher toggle */ -->
-          <a
-            href="#"
-            class="add-button"
+          <button class="btn btn-primary me-2"
             v-if="!isCreating"
             @click.prevent="isCreating = !isCreating"
-            >Tambah Barang</a
+            >Tambah Barang</button
           >
           <div class="add-card" v-else>
             <div class="card mb-2">
@@ -60,8 +57,9 @@
                   class="form-control border-0 mb-2"
                   placeholder="Nama Barang"
                   type="text"
+                  required
                 />
-                <select v-model="form.jenisbarang" value="feature">
+                <select required v-model="form.jenisbarang" value="feature">
                   <option disabled value="">Pilih Jenis Barang</option>
                   <option
                     v-for="option in options.inquiry"
@@ -75,18 +73,21 @@
                   class="form-control border-0 mb-2"
                   placeholder="Jumlah Barang"
                   type="text"
+                  required
                 />
                 <input
                   v-model="form.hargabarang"
                   class="form-control border-0 mb-2"
                   placeholder="harga Barang"
                   type="text"
+                  required
                 />
                 <input
                   v-model="form.tglmasuk"
                   class="form-control border-0 mb-2"
                   placeholder="Tanggal Masuk"
                   type="date"
+                  required
                 />
                 <div class="image-upload">
                   <label for="image-upload-input">
@@ -163,15 +164,18 @@ middleware: 'auth',
           { value: "Lainnya", text: "Lainnya" },
         ],
       },
+      barangs: [
+
+      ],
 
     };
   },
   computed: {
-      barangs() {
-        return this.$store.state.barang.barangs;
-        },
+      // barangs() {
+      //   return this.$store.state.barang.barangs;
+      //   },
 
-        ...mapState('barang', ['barangs']),
+      //   ...mapState('barang', ['barangs']),
 
     filteredBarangs() {
       let filteredBarangs = [...this.barangs];
@@ -196,20 +200,20 @@ middleware: 'auth',
   },
 
   mounted() {
-    // this.fetchDataFromAPI();
-    this.getBarangs();
+    this.fetchDataFromAPI();
+    // this.getBarangs();
   },
 
   methods: {
-    // async fetchDataFromAPI() { //axios
-    //   try {
-    //     const response = await this.$axios.get("/barang/all"); // Replace with your API endpoint
-    //     this.barangs = response.data; // Assuming your API response is an array of barangs
-    //     console.log(response);
-    //   } catch (error) {
-    //     console.error("Error fetching data from API:", error);
-    //   }
-    // },
+    async fetchDataFromAPI() { //axios
+      try {
+        const response = await this.$axios.get("/barang/all"); // Replace with your API endpoint
+        this.barangs = response.data; // Assuming your API response is an array of barangs
+        console.log(response);
+      } catch (error) {
+        console.error("Error fetching data from API:", error);
+      }
+    },
 
     previewImage(event) {
       const input = event.target;
@@ -222,44 +226,44 @@ middleware: 'auth',
       }
     },
 
-    // async handleSubmit() { //axios
-    //   try {
-    //     const response = await this.$axios.post("/barang/add", this.form); // Replace with your API endpoint
-    //     const newItem = response.data;
-    //     this.barangs.push(newItem);
-    //     // Reset the form fields after adding a barang
-    //     this.form = {
-    //       id: "",
-    //       namabarang: "",
-    //       jenisbarang: "",
-    //       jumlahbarang: "",
-    //       hargabarang: "",
-    //       tglmasuk: "",
-    //       imageurl: "",
-    //     };
-    //     this.isCreating = false;
-    //   } catch (error) {
-    //     console.error("Error creating new barang:", error);
-    //   }
-    // },
-           async handleSubmit() { // state management
+    async handleSubmit() { //axios
+      try {
+        const response = await this.$axios.post("/barang/add", this.form); // Replace with your API endpoint
+        const newItem = response.data;
+        this.barangs.push(newItem);
+        // Reset the form fields after adding a barang
+        this.form = {
+          id: "",
+          namabarang: "",
+          jenisbarang: "",
+          jumlahbarang: "",
+          hargabarang: "",
+          tglmasuk: "",
+          imageurl: "",
+        };
+        this.isCreating = false;
+      } catch (error) {
+        console.error("Error creating new barang:", error);
+      }
+    },
+        //    async handleSubmit() { // state management
 
-            this.form.id += 1
-            // Dispatch the addBarang action
-            await this.addBarang(this.form);
+        //     this.form.id += 1
+        //     // Dispatch the addBarang action
+        //     await this.addBarang(this.form);
 
-            this.form = {
-            namabarang: '',
-            jenisbarang: '',
-            jumlahbarang: '',
-            hargabarang: '',
-            tglmasuk:'',
-            imageurl:'',
-            }
-            this.isCreating = false;
+        //     this.form = {
+        //     namabarang: '',
+        //     jenisbarang: '',
+        //     jumlahbarang: '',
+        //     hargabarang: '',
+        //     tglmasuk:'',
+        //     imageurl:'',
+        //     }
+        //     this.isCreating = false;
 
-        },
-        ...mapActions('barang', ['addBarang', 'getBarangs']),
+        // },
+        // ...mapActions('barang', ['addBarang', 'getBarangs']),
 
 
   },

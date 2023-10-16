@@ -15,6 +15,7 @@ type="email"
 class="input"
 name="email"
 v-model="email"
+required
 />
 </div>
 </div>

@@ -12,7 +12,7 @@
           <div class="mb-1 nama-barang">Nama {{ barang.namabarang }}</div>
           <div class="mb-1 jenis-barang">Jenis {{ barang.jenisbarang }}</div>
           <div class="mb-1 jumlah-barang">Jumlah {{ barang.jumlahbarang }}</div>
-          <div class="mb-1 harga-barang">Harga {{ barang.hargabarang }}</div>
+          <div class="mb-1 harga-barang">Harga {{formatPrice(barang.hargabarang)}}</div>
           <div class="mb-1 tglmasuk">Tanggal Masuk {{ barang.tglmasuk }}</div>
           <div class="description-barang small text-muted"></div>
         </div>
@@ -103,19 +103,20 @@ export default {
     };
   },
   computed: {
-    barangs() {
-      return this.$store.state.barang.barangs;
-    },
+    // barangs() {
+    //   return this.$store.state.barang.barangs;
+    // },
 
-    ...mapState("barang", ["barangs"]),
+    // ...mapState("barang", ["barangs"]),
   },
   methods: {
-    // formatPrice(num) {
-    //   const reverse = num.toString().split("").reverse().join("");
-    //   let result = reverse.match(/\d{1,3}/g);
-    //   result = result.join(".").split("").reverse().join("");
-    //   return result;
-    // },
+
+    formatPrice(num) {
+      const reverse = num.toString().split("").reverse().join("");
+      let result = reverse.match(/\d{1,3}/g);
+      result = result.join(".").split("").reverse().join("");
+      return result;
+    },
 
     editBarang() {
       // Set editedBarang to a copy of the current barang
@@ -123,40 +124,42 @@ export default {
       // Enable edit mode
       this.isEditing = true;
     },
-    // async deleteBarang(id) { // axios
-    //   const result = await Swal.fire({
-    //     title: "Are you sure?",
-    //     text: "You won't be able to revert this!",
-    //     icon: "warning",
-    //     showCancelButton: true,
-    //     confirmButtonColor: "#3085d6",
-    //     cancelButtonColor: "#d33",
-    //     confirmButtonText: "Yes, delete it!",
-    //   });
 
-    //   if (result.isConfirmed) {
-    //     try {
-    //       await this.$axios.delete(
-    //         `/barang/delete/${id}`
-    //       ); // Replace with your API endpoint
-    //       this.$emit("delete-barang", this.barang);
-    //       Swal.fire("Deleted!", "The item has been deleted.", "success");
-    //     } catch (error) {
-    //       console.error("Error deleting barang:", error.response);
-    //       Swal.fire(
-    //         "Error!",
-    //         "An error occurred while deleting the item.",
-    //         "error"
-    //       );
-    //     }
-    //   }
-    // },
+    async deleteBarang(id) { // axios
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
 
-    async deleteBarang() {
-
-    await this.$store.dispatch("barang/deleteBarang", this.barang.id);
-
+      if (result.isConfirmed) {
+        try {
+          await this.$axios.delete(
+            `/barang/delete/${id}`
+          ); // Replace with your API endpoint
+          this.$emit("delete-barang", this.barang);
+          Swal.fire("Deleted!", "The item has been deleted.", "success");
+          window.location.reload()
+        } catch (error) {
+          console.error("Error deleting barang:", error.response);
+          Swal.fire(
+            "Error!",
+            "An error occurred while deleting the item.",
+            "error"
+          );
+        }
+      }
     },
+
+    // async deleteBarang() {
+
+    // await this.$store.dispatch("barang/deleteBarang", this.barang.id);
+
+    // },
 
     previewImage(event) {
       const input = event.target;
@@ -168,28 +171,16 @@ export default {
         reader.readAsDataURL(input.files[0]);
       }
     },
-    // async saveEdit() {  //axios
-    //   try {
-    //     // Send a PUT request to update the edited barang
-    //     await this.$axios.put(
-    //       `/barang/update/${this.editedBarang.id}`,
-    //       this.editedBarang
-    //     ); // Replace with your API endpoint
-    //     // Update the original barang with edited values
-    //     Object.assign(this.barang, this.editedBarang);
-    //     // After saving, disable edit mode
-    //     this.isEditing = false;
-    //   } catch (error) {
-    //     console.error("Error saving edited barang:", error.response);
-    //   }
-    // },
 
-    async saveEdit() {
-      // state management
+    async saveEdit() {  //axios
       try {
-        // Call the Vuex action to update the edited barang
-        await this.updateBarang(this.editedBarang);
-
+        // Send a PUT request to update the edited barang
+        await this.$axios.put(
+          `/barang/update/${this.editedBarang.id}`,
+          this.editedBarang
+        ); // Replace with your API endpoint
+        // Update the original barang with edited values
+        Object.assign(this.barang, this.editedBarang);
         // After saving, disable edit mode
         this.isEditing = false;
       } catch (error) {
@@ -197,13 +188,26 @@ export default {
       }
     },
 
+    // async saveEdit() {
+    //   // state management
+    //   try {
+    //     // Call the Vuex action to update the edited barang
+    //     await this.updateBarang(this.editedBarang);
+
+    //     // After saving, disable edit mode
+    //     this.isEditing = false;
+    //   } catch (error) {
+    //     console.error("Error saving edited barang:", error.response);
+    //   }
+    // },
+
     cancelEdit() {
       // If the user cancels the edit, revert the editedBarang object to the original barang
       this.editedBarang = { ...this.barang };
       // Disable edit mode
       this.isEditing = false;
     },
-    ...mapActions("barang", ["updateBarang", "deleteBarang"]),
+    // ...mapActions("barang", ["updateBarang", "deleteBarang"]),
   },
 };
 </script>
@@ -223,5 +227,10 @@ export default {
 .harga-barang,
 .tglmasuk {
   margin-bottom: 1rem;
+}
+
+.img-preview{
+  width: 100%;
+  height: 200px;
 }
 </style>

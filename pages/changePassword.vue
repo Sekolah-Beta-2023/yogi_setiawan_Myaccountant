@@ -15,6 +15,7 @@ type="password"
 class="input"
 name="oldpassword"
 v-model="oldPassword"
+required
 />
 </div>
 </div>
@@ -26,6 +27,7 @@ type="password"
 class="input"
 name="newpassword"
 v-model="newPassword"
+required
 />
 </div>
 </div>

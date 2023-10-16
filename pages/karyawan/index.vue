@@ -48,21 +48,21 @@ v-for="karyawan in filteredKaryawans"
 <div class="formItem" v-for="item in karyawans" :key="item.id">{{ item.form }}</div>
 <!-- /* Jika isCreating == false maka tombol Add Artikel tidak akan tampil */
 /* isCreating = !isCreating berfungsi sebagai switcher toggle */ -->
-<a href="#" class="add-button" v-if="!isCreating" @click.prevent="isCreating = !isCreating">Tambah Karyawan</a>
+<button class="btn btn-primary me-2" v-if="!isCreating" @click.prevent="isCreating = !isCreating">Tambah Karyawan</button>
 <div class="add-card" v-else>
 <div class="card mb-2">
 <div class="card-body d-flex flex-column p-0">
-<input v-model="form.nama" class="form-control border-0 mb-2" placeholder="Nama Karyawan" type="text">
-<input v-model="form.email" class="form-control border-0 mb-2" placeholder="Email" type="email">     
-            <select v-model="form.jabatan" value="feature">
+<input v-model="form.nama" class="form-control border-0 mb-2" required placeholder="Nama Karyawan" type="text">
+<input v-model="form.email" class="form-control border-0 mb-2" required placeholder="Email" type="email">     
+            <select required v-model="form.jabatan" value="feature">
                 <option disabled value=""> Pilih Jabatan</option>
                 <option v-for="option in options.inquiry" v-bind:key="option.value">
                 {{ option.text }}
                 </option>
             </select>    
-<input v-model="form.phone" class="form-control border-0 mb-2" placeholder="Phone Number" type="text">
-<input v-model="form.umur" class="form-control border-0 mb-2" placeholder="Umur" type="text">
-<input v-model="form.tgl_lahir" class="form-control border-0 mb-2" placeholder="Tanggal Lahir" type="date">  
+<input v-model="form.phone" class="form-control border-0 mb-2" required placeholder="Phone Number" type="text">
+<input v-model="form.umur" class="form-control border-0 mb-2" required placeholder="Umur" type="text">
+<input v-model="form.tgl_lahir" class="form-control border-0 mb-2" required placeholder="Tanggal Lahir" type="date">  
 <div class="image-upload">
   <label for="image-upload-input">
     <img v-if="form.imageurl" :src="form.imageurl" alt="Preview Image" class="img-preview" />
@@ -137,16 +137,19 @@ CardKaryawan
                 { value: 'Lainnya', text: "Lainnya"},
             ]
             },
+            karyawans: [
+
+            ],
 
 
         }
     },
         computed: {
-                karyawans() {
-        return this.$store.state.karyawan.karyawans;
-        },
+        //         karyawans() {
+        // return this.$store.state.karyawan.karyawans;
+        // },
 
-        ...mapState('karyawan', ['karyawans']),
+        // ...mapState('karyawan', ['karyawans']),
         
         filteredKaryawans() {
         let filteredKaryawans = [...this.karyawans];
@@ -171,19 +174,19 @@ CardKaryawan
     },
 
   mounted() {
-    // this.fetchDataFromAPI();
-    this.getKaryawans();
+    this.fetchDataFromAPI();
+    // this.getKaryawans();
   },
       methods: {
-    //     async fetchDataFromAPI() { //axios
-    //   try {
-    //     const response = await this.$axios.get("/karyawan/all"); // Replace with your API endpoint
-    //     this.karyawans = response.data; // Assuming your API response is an array of karyawans
-    //     console.log(response);
-    //   } catch (error) {
-    //     console.error("Error fetching data from API:", error);
-    //   }
-    // },      
+        async fetchDataFromAPI() { //axios
+      try {
+        const response = await this.$axios.get("/karyawan/all"); // Replace with your API endpoint
+        this.karyawans = response.data; // Assuming your API response is an array of karyawans
+        console.log(response);
+      } catch (error) {
+        console.error("Error fetching data from API:", error);
+      }
+    },      
 
 
           previewImage(event) {
@@ -198,51 +201,51 @@ CardKaryawan
     },
 
 
-      // async handleSubmit() { //axios
-      // try {
-      //   const response = await this.$axios.post("/karyawan/add", this.form); // Replace with your API endpoint
-      //   const newItem = response.data;
-      //   this.karyawans.push(newItem);
-      //   // Reset the form fields after adding a karyawan
-      //   this.form = {
+      async handleSubmit() { //axios
+      try {
+        const response = await this.$axios.post("/karyawan/add", this.form); // Replace with your API endpoint
+        const newItem = response.data;
+        this.karyawans.push(newItem);
+        // Reset the form fields after adding a karyawan
+        this.form = {
 
-      //           id:'',
-      //           nama:'',
-      //           email:'',
-      //           jabatan:'',
-      //           umur:'',
-      //           phone:'',
-      //           tgl_lahir:'',
-      //           imageurl:'',
+                id:'',
+                nama:'',
+                email:'',
+                jabatan:'',
+                umur:'',
+                phone:'',
+                tgl_lahir:'',
+                imageurl:'',
 
-      //   };
-      //   this.isCreating = false;
-      // } catch (error) {
-      //   console.error("Error creating new karyawan:", error);
-      // }
-      //   }
+        };
+        this.isCreating = false;
+      } catch (error) {
+        console.error("Error creating new karyawan:", error);
+      }
+        }
 
-        async handleSubmit() { // state management
+      //   async handleSubmit() { // state management
 
-            this.form.id += 1
-            // Dispatch the addKaryawan action
-            await this.addKaryawan(this.form);
+      //       this.form.id += 1
+      //       // Dispatch the addKaryawan action
+      //       await this.addKaryawan(this.form);
 
-            this.form = {
-            nama: '',
-            email: '',
-            jabatan: '',
-            umur: '',
-            phone:'',
-            tgl_lahir:'',
-            imageurl:'',
-            }
-            this.isCreating = false;
+      //       this.form = {
+      //       nama: '',
+      //       email: '',
+      //       jabatan: '',
+      //       umur: '',
+      //       phone:'',
+      //       tgl_lahir:'',
+      //       imageurl:'',
+      //       }
+      //       this.isCreating = false;
 
-        },
+      //   },
 
 
-      ...mapActions('karyawan', ['addKaryawan', 'getKaryawans']),
+      // ...mapActions('karyawan', ['addKaryawan', 'getKaryawans']),
     },      
             
 
