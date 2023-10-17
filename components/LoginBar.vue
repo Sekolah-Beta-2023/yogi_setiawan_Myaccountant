@@ -34,6 +34,7 @@
 <script>
 
 export default {
+nama: 'LoginBar',
 computed: {
 
     },

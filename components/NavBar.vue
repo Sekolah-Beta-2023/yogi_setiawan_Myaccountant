@@ -27,6 +27,7 @@
 <script>
 // import { mapGetters } from 'vuex'
 export default {
+nama: 'NavBar',    
 computed: {
 
 // ...mapGetters(['isAuthenticated', 'loggedInUser'])

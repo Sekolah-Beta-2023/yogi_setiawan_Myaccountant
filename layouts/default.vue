@@ -1,10 +1,10 @@
 <template>
 <div>
     <client-only>
-      <Navbar v-if="showNavbar" />
+      <NavBar v-if="showNavbar" />
     </client-only>
     <client-only>
-      <Loginbar v-if="showLoginbar" />
+      <LoginBar v-if="showLoginbar" />
     </client-only>
 <nuxt/>
     <client-only>
@@ -16,17 +16,9 @@
 </div>
 </template>
 <script>
-import Navbar from '~/components/Navbar.vue'
-import Loginbar from '~/components/Loginbar.vue'
-import Footer from '~/components/Footer.vue'
-import FooterLogin from '~/components/Footerlogin.vue'
+
 export default {
-components: {
-Navbar,
-Loginbar,
-Footer,
-FooterLogin
-},
+
 computed: {
     showNavbar() {
       // List of pages where you want to show the Navbar

@@ -24,3 +24,8 @@ p {
   margin: 0; /* Remove default margin for paragraphs */
 }
 </style>
+<script>
+export default {
+  nama: 'FooterLogin',
+}
+</script>
