@@ -26,6 +26,7 @@
 
     <!-- Display edit form when in edit mode -->
     <div v-else>
+      <Notification :message="error" v-if="error" />
       <div class="image-upload">
         <label for="image-upload-input">
           <img
@@ -92,7 +93,11 @@
 <script>
 import Swal from "sweetalert2";
 import { mapState, mapMutations, mapActions } from "vuex";
+import Notification from "~/components/Notification";
 export default {
+  components: {
+    Notification,
+  },
   props: {
     karyawan: {
       type: Object,
@@ -102,7 +107,9 @@ export default {
   },
   data() {
     return {
-      showErrors : false,
+      
+      error: null,
+      showErrors: false,
       isEditing: false, // Track if the edit mode is active
       editedKaryawan: { ...this.karyawan },
       options: {
@@ -123,6 +130,7 @@ export default {
   },
   methods: {
     editKaryawan() {
+      this.error = null;
       // Set editedKaryawan to a copy of the current karyawan
       this.editedKaryawan = { ...this.karyawan };
       // Enable edit mode
@@ -216,22 +224,32 @@ export default {
 
     async saveEdit() {
       this.showErrors = true;
+      this.error = null;
+
+
+
       //axios
-      if(this.editedKaryawan.nama.length >= 3 && this.editedKaryawan.email.length >= 14 && this.editedKaryawan.phone.length >= 10 && /[0-9]/.test(this.editedKaryawan.phone) && /[0-9]/.test(this.editedKaryawan.umur) ){
-      try {
-        // Send a PUT request to update the edited karyawan
-        await this.$axios.put(
-          `/karyawan/update/${this.editedKaryawan.id}`,
-          this.editedKaryawan
-        ); // Replace with your API endpoint
-        // Update the original karyawan with edited values
-        Object.assign(this.karyawan, this.editedKaryawan);
-        // After saving, disable edit mode
-        this.isEditing = false;
-        this.showErrors = false;
-      } catch (error) {
-        console.error("Error saving edited karyawan:", error.response);
-      }
+      if (
+        this.editedKaryawan.nama.length >= 3 &&
+        this.editedKaryawan.email.length >= 14 &&
+        this.editedKaryawan.phone.length >= 10 &&
+        /[0-9]/.test(this.editedKaryawan.phone) &&
+        /[0-9]/.test(this.editedKaryawan.umur)
+      ) {
+        try {
+          // Send a PUT request to update the edited karyawan
+          await this.$axios.put(
+            `/karyawan/update/${this.editedKaryawan.id}`,
+            this.editedKaryawan
+          ); // Replace with your API endpoint
+          // Update the original karyawan with edited values
+          Object.assign(this.karyawan, this.editedKaryawan);
+          // After saving, disable edit mode
+          this.isEditing = false;
+          this.showErrors = false;
+        } catch (error) {
+          console.error("Error saving edited karyawan:", error.response);
+        }
       }
     },
 
@@ -244,33 +262,34 @@ export default {
   },
 
   computed: {
-        namaError(){
-      if(this.showErrors && this.editedKaryawan.nama.length < 3){
-          return "Nama must be at least 3 characters.";
-        } return "";
-      },
-    emailError(){
-      if(this.showErrors && this.editedKaryawan.email.length < 14){
-          return "Email must be at least 14 characters.";
-        } return "";
-      },
-    umurError(){
-      if(this.showErrors && !/[0-9]/.test(this.editedKaryawan.umur)){
-          return "Umur must contain number.";
-        } return "";
-      },
-    phoneError(){
+    namaError() {
+      if (this.showErrors && this.editedKaryawan.nama.length < 3) {
+        return "Nama must be at least 3 characters.";
+      }
+      return "";
+    },
+    emailError() {
+      if (this.showErrors && this.editedKaryawan.email.length < 14) {
+        return "Email must be at least 14 characters.";
+      }
+      return "";
+    },
+    umurError() {
+      if (this.showErrors && !/[0-9]/.test(this.editedKaryawan.umur)) {
+        return "Umur must contain number.";
+      }
+      return "";
+    },
+    phoneError() {
       if (this.showErrors) {
         if (this.editedKaryawan.phone.length < 10) {
           return "Phone Number must be at least 10 characters.";
-        } else if (
-          !/[0-9]/.test(this.editedKaryawan.phone)
-        ) {
+        } else if (!/[0-9]/.test(this.editedKaryawan.phone)) {
           return "Phone Number must contain number.";
         }
       }
       return "";
-      },
+    },
     // karyawans() {
     //       return this.$store.state.karyawan.karyawans;
     //       },

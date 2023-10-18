@@ -50,6 +50,7 @@
         </transition-group>
 
         <form v-on:submit.prevent="handleSubmit">
+          <Notification :message="error" v-if="error" />
           <div class="action py-2">
             <div class="formItem" v-for="item in karyawans" :key="item.id">
               {{ item.form }}
@@ -73,9 +74,11 @@
                     placeholder="Nama Karyawan"
                     type="text"
                   />
-              <div> <p class="help is-danger" v-if="namaError">
-                {{ namaError }}
-              </p> </div>
+                  <div>
+                    <p class="help is-danger" v-if="namaError">
+                      {{ namaError }}
+                    </p>
+                  </div>
                   <input
                     v-model="form.email"
                     class="form-control border-0 mb-2"
@@ -83,9 +86,11 @@
                     placeholder="Email"
                     type="email"
                   />
-              <div> <p class="help is-danger" v-if="emailError">
-                {{ emailError }}
-              </p> </div>
+                  <div>
+                    <p class="help is-danger" v-if="emailError">
+                      {{ emailError }}
+                    </p>
+                  </div>
                   <select required v-model="form.jabatan" value="feature">
                     <option disabled value="">Pilih Jabatan</option>
                     <option
@@ -102,9 +107,11 @@
                     placeholder="Phone Number"
                     type="text"
                   />
-              <div> <p class="help is-danger" v-if="phoneError">
-                {{ phoneError }}
-              </p> </div>
+                  <div>
+                    <p class="help is-danger" v-if="phoneError">
+                      {{ phoneError }}
+                    </p>
+                  </div>
                   <input
                     v-model="form.umur"
                     class="form-control border-0 mb-2"
@@ -112,9 +119,11 @@
                     placeholder="Umur"
                     type="text"
                   />
-              <div> <p class="help is-danger" v-if="umurError">
-                {{ umurError }}
-              </p> </div>
+                  <div>
+                    <p class="help is-danger" v-if="umurError">
+                      {{ umurError }}
+                    </p>
+                  </div>
                   <input
                     v-model="form.tgl_lahir"
                     class="form-control border-0 mb-2"
@@ -162,16 +171,21 @@
 <script>
 import CardKaryawan from "@/components/CardKaryawan.vue";
 import { mapState, mapMutations, mapActions } from "vuex";
+import Notification from "~/components/Notification";
+
 
 export default {
   middleware: "auth",
   components: {
     CardKaryawan,
+    Notification,
+
   },
 
   data() {
     return {
-      showErrors : false,
+      error: null,
+      showErrors: false,
       // Variabel penampung berdasar kategori
       cariJabatan: "pilih",
       // Variabel penampung teks pencarian
@@ -208,33 +222,34 @@ export default {
     };
   },
   computed: {
-    namaError(){
-      if(this.showErrors && this.form.nama.length < 3){
-          return "Nama must be at least 3 characters.";
-        } return "";
-      },
-    emailError(){
-      if(this.showErrors && this.form.email.length < 14){
-          return "Email must be at least 14 characters.";
-        } return "";
-      },
-    umurError(){
-      if(this.showErrors && !/[0-9]/.test(this.form.umur)){
-          return "Umur must contain number.";
-        } return "";
-      },
-    phoneError(){
+    namaError() {
+      if (this.showErrors && this.form.nama.length < 3) {
+        return "Nama must be at least 3 characters.";
+      }
+      return "";
+    },
+    emailError() {
+      if (this.showErrors && this.form.email.length < 14) {
+        return "Email must be at least 14 characters.";
+      }
+      return "";
+    },
+    umurError() {
+      if (this.showErrors && !/[0-9]/.test(this.form.umur)) {
+        return "Umur must contain number.";
+      }
+      return "";
+    },
+    phoneError() {
       if (this.showErrors) {
         if (this.form.phone.length < 10) {
           return "Phone Number must be at least 10 characters.";
-        } else if (
-          !/[0-9]/.test(this.form.phone)
-        ) {
+        } else if (!/[0-9]/.test(this.form.phone)) {
           return "Phone Number must contain number.";
         }
       }
       return "";
-      },    
+    },
 
     //         karyawans() {
     // return this.$store.state.karyawan.karyawans;
@@ -294,28 +309,56 @@ export default {
     async handleSubmit() {
       this.showErrors = true;
       //axios
-      if(this.form.nama.length >= 3 && this.form.email.length >= 14 && this.form.phone.length >= 10 && /[0-9]/.test(this.form.phone) && /[0-9]/.test(this.form.umur) ){
-      try {
-        const response = await this.$axios.post("/karyawan/add", this.form); // Replace with your API endpoint
-        const newItem = response.data;
-        this.karyawans.push(newItem);
-        // Reset the form fields after adding a karyawan
-        this.form = {
-          id: "",
-          nama: "",
-          email: "",
-          jabatan: "",
-          umur: "",
-          phone: "",
-          tgl_lahir: "",
-          imageurl: "",
-        };
-        this.isCreating = false;
-        this.showErrors = false;
-      } catch (error) {
-        console.error("Error creating new karyawan:", error);
+
+      const isEmailExists = this.karyawans.some(
+        (karyawan) => karyawan.email === this.form.email
+      );
+      const isPhoneExists = this.karyawans.some(
+        (karyawan) => karyawan.phone === this.form.phone
+      );
+
+      if (isEmailExists) {
+        this.$data.error = "Email already exists";
+        return;
+      } else {
+        this.$data.error = "";
       }
-      } 
+
+      if (isPhoneExists) {
+        this.$data.error= "Phone already exists";
+        return;
+      } else {
+        this.$data.error = "";
+      }
+
+      if (
+        this.form.nama.length >= 3 &&
+        this.form.email.length >= 14 &&
+        this.form.phone.length >= 10 &&
+        /[0-9]/.test(this.form.phone) &&
+        /[0-9]/.test(this.form.umur)
+      ) {
+        try {
+          const response = await this.$axios.post("/karyawan/add", this.form); // Replace with your API endpoint
+          const newItem = response.data;
+          this.karyawans.push(newItem);
+          // Reset the form fields after adding a karyawan
+          this.form = {
+            id: "",
+            nama: "",
+            email: "",
+            jabatan: "",
+            umur: "",
+            phone: "",
+            tgl_lahir: "",
+            imageurl: "",
+          };
+          this.isCreating = false;
+          this.showErrors = false;
+        } catch (error) {
+          console.error("Error creating new karyawan:", error);
+        }
+      }
     },
 
     //   async handleSubmit() { // state management
