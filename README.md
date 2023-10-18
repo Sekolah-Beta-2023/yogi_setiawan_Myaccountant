@@ -4,6 +4,8 @@ A digital platform designed to assist accountants with activities such as employ
 
 To see if there is an update and full source: https://github.com/yogiset/myaccountaN
 
+Link deploy = https://myaccounta-n.vercel.app/
+
 
 ## Tech Stack
 1. Frontend : Nuxt.js 2
@@ -23,6 +25,14 @@ To see if there is an update and full source: https://github.com/yogiset/myaccou
 3. Upload, show data from karyawan, edit, and delete data from karyawan
 4. Upload, show data from barang, edit, and delete data from barang
 5. Searching & filtering (nama,jabatan,jenis barang)
+
+## Setting Deploy Api
+1.spring_profiles_active=prod
+2.PROD_DB_HOST=HOST_HERE
+3.PROD_DB_PORT=POST_HERE
+4.PROD_DB_NAME=railway
+5.PROD_DB_PASSWORD=PASSWORD_HERE
+6.PROD_DB_USERNAME=postgres
 
 ## Contacts
 1. Linkedin: [https://www.linkedin.com/in/yogi-setiawan-8586b0280/](https://www.linkedin.com/in/yogi-setiawan-8586b0280/)
