@@ -27,22 +27,20 @@
 <script>
 // import { mapGetters } from 'vuex'
 export default {
-nama: 'NavBar',    
-computed: {
+  nama: "NavBar",
+  computed: {
+    // ...mapGetters(['isAuthenticated', 'loggedInUser'])
+  },
 
-// ...mapGetters(['isAuthenticated', 'loggedInUser'])
+  // methods: {
 
-    },
+  // async logout() {
+  // await this.$auth.logout();
+  //         },
 
-// methods: {
-
-// async logout() {
-// await this.$auth.logout();
-//         },
-
-
-//     },
-
-
-}
+  //     },
+};
 </script>
+<style scoped>
+
+</style>

@@ -1,88 +1,124 @@
 <template>
-<section class="section min-vh-100">    
-<div class="container">
-<div class="columns">
-<div class="column is-4 is-offset-4">
-<h2 class="title has-text-centered">Please keep your password,Don't tell anybody</h2>
-<form method="post" @submit.prevent="changepassword">
-<Notification :message="error" v-if="error"/>
-<NotificationEmail :message="messageEmail" v-if="messageEmail"/>    
-<div class="field">
-<label class="label">Old Password</label>
-<div class="control">
-<input
-type="password"
-class="input"
-name="oldpassword"
-v-model="oldPassword"
-required
-/>
-</div>
-</div>
-<div class="field">
-<label class="label">New Password</label>
-<div class="control">
-<input
-type="password"
-class="input"
-name="newpassword"
-v-model="newPassword"
-required
-/>
-</div>
-</div>
-<div class="control">
-<button type="submit" class="button is-dark is-fullwidth">Change Password</button>
-</div>
-</form>
-<div class="has-text-centered" style="margin-top: 20px">
-
-</div>
-</div>
-</div>
-</div>
-</section>
+  <section class="section min-vh-100">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-4 is-offset-4">
+          <h2 class="title has-text-centered">
+            Please keep your password,Don't tell anybody
+          </h2>
+          <form method="post" @submit.prevent="changepassword">
+            <Notification :message="error" v-if="error" />
+            <NotificationEmail :message="messageEmail" v-if="messageEmail" />
+            <div class="field">
+              <label class="label">Old Password</label>
+              <div class="control">
+                <input
+                  type="password"
+                  class="input"
+                  name="oldpassword"
+                  v-model="oldPassword"
+                  required
+                />
+              </div>
+              <p class="help is-danger" v-if="passwordError">
+                {{ passwordError }}
+              </p> 
+            </div>
+            <div class="field">
+              <label class="label">New Password</label>
+              <div class="control">
+                <input
+                  type="password"
+                  class="input"
+                  name="newpassword"
+                  v-model="newPassword"
+                  required
+                />
+              </div>
+              <p class="help is-danger" v-if="passwordError2">
+                {{ passwordError2 }}
+              </p>
+            </div>
+            <div class="control">
+              <button type="submit" class="button is-dark is-fullwidth">
+                Change Password
+              </button>
+            </div>
+          </form>
+          <div class="has-text-centered" style="margin-top: 20px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
 </template>
 <script>
-import Notification from '~/components/Notification'
-import NotificationEmail from '~/components/NotificationEmail'
-import jwt from 'jsonwebtoken';
+import Notification from "~/components/Notification";
+import NotificationEmail from "~/components/NotificationEmail";
+import jwt from "jsonwebtoken";
 export default {
-middleware: 'auth',   
-components: {
-Notification,
-NotificationEmail,
-},
+  middleware: "auth",
+  components: {
+    Notification,
+    NotificationEmail,
+  },
 
-data() {
-return {
-oldPassword: '',
-newPassword: '',
-error: null,
-messageEmail: null,
-    }
-},
+  data() {
+    return {
+      showErrors : false,
+      oldPassword: "",
+      newPassword: "",
+      error: null,
+      messageEmail: null,
+    };
+  },
 
-mounted() {
 
-},
+  mounted() {},
+
+  computed:{
+      passwordError(){
+        if(this.showErrors && this.oldPassword.length < 6){
+          return "Password must be at least 6 characters.";
+        } return "";
+      },
+
+        passwordError2() {
+      if (this.showErrors) {
+        if (this.newPassword.length < 6) {
+          return "Password must be at least 6 characters.";
+        } else if (
+          !/[A-Z]/.test(this.newPassword) ||
+          !/[a-z]/.test(this.newPassword)
+        ) {
+          return "Password must contain at least one uppercase and one lowercase letter.";
+        }
+      }
+      return "";
+    },
+  },
 
   methods: {
     async changepassword() {
+      this.showErrors = true;
+
+      if(this.oldPassword.length >= 6 && this.newPassword.length >= 6 &&
+        /[A-Z]/.test(this.newPassword) &&
+        /[a-z]/.test(this.newPassword)){
+
       try {
-        const jwtToken = localStorage.getItem('token');
-        console.log('token', jwtToken);
+        const jwtToken = localStorage.getItem("token");
+        console.log("token", jwtToken);
 
         // Decode the JWT token to extract the email using jsonwebtoken
         const decodedToken = jwt.decode(jwtToken);
-        console.log('decodedToken', decodedToken);
+        console.log("decodedToken", decodedToken);
 
         if (decodedToken) {
           const userEmail = decodedToken.sub; //'sub' contains the email
-          console.log('userEmail', userEmail);
+          console.log("userEmail", userEmail);
 
           const response = await this.$axios.post(
-            '/user/changePassword',
+            "/user/changePassword",
             {
               oldPassword: this.oldPassword,
               newPassword: this.newPassword,
@@ -99,10 +135,10 @@ mounted() {
             if (response.status === 200) {
               this.messageEmail = response.data.message;
               this.error = null;
-              this.oldPassword = '';
-              this.newPassword = '';
+              this.oldPassword = "";
+              this.newPassword = "";
             } else if (response.status === 400) {
-              console.log('Bad Request Response Data:', response.data);  
+              console.log("Bad Request Response Data:", response.data);
               this.error = response.data.message;
               this.messageEmail = null;
             } else {
@@ -113,25 +149,22 @@ mounted() {
           }
         } else {
           this.error = "Invalid or missing authentication token.";
-        }
+        } 
+          this.showErrors = false;
       } catch (e) {
-        this.error = e.response.data.message
+        this.error = e.response.data.message;
         this.messageEmail = null;
       }
+
+    } 
     },
   },
-}
-
-
-    
-
-
+};
 </script>
 <style scoped>
-.section{
-    background:  url('static/6.webp') no-repeat;
-    background-size: cover;
-    background-position: center;
-    
+.section {
+  background: url("static/6.webp") no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 </style>

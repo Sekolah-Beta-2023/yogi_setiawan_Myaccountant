@@ -1,142 +1,172 @@
 <template>
-<section class="section min-vh-100">
-  <div class="py-4">
-    <div class="container">
-      <div class="title border-bottom d-flex align-items-center py-2">
-        <h5>Inventaris</h5>
-        <div class="d-flex align-items-center ms-auto">
-          <!-- /* Form input pencarian */ -->
-          <input
-            type="text"
-            class="form-control search-input"
-            placeholder="Cari Nama Barang"
-            v-model="searchQuery"
-          />
-          <!-- /* Drop down category */ -->
-          <select
-            id="akuntan"
-            class="form-control category-dropdown"
-            v-model="cariJenis"
-          >
-            <option value="pilih">Pilih Jenis Barang</option>
-            <option value="Laptop">Laptop</option>
-            <option value="PC">PC</option>
-            <option value="Monitor">Monitor</option>
-            <option value="Mobil">Mobil</option>
-            <option value="Motor">Motor</option>
-            <option value="Lainnya">Lainnya</option>
-          </select>
+  <section class="section min-vh-100">
+    <div class="py-4">
+      <div class="container">
+        <div class="title border-bottom d-flex align-items-center py-2">
+          <h5>Inventaris</h5>
+          <div class="d-flex align-items-center ms-auto">
+            <!-- /* Form input pencarian */ -->
+            <input
+              type="text"
+              class="form-control search-input"
+              placeholder="Cari Nama Barang"
+              v-model="searchQuery"
+            />
+            <!-- /* Drop down category */ -->
+            <select
+              id="akuntan"
+              class="form-control category-dropdown"
+              v-model="cariJenis"
+            >
+              <option value="pilih">Pilih Jenis Barang</option>
+              <option value="Laptop">Laptop</option>
+              <option value="PC">PC</option>
+              <option value="Monitor">Monitor</option>
+              <option value="Mobil">Mobil</option>
+              <option value="Motor">Motor</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
 
-          <div
-            class="d-flex align-items-center justify-content-end w-100 view-as-button"
-          >
+            <div
+              class="d-flex align-items-center justify-content-end w-100 view-as-button"
+            ></div>
           </div>
         </div>
-      </div>
-<transition-group name="barang" tag="div" class="d-flex gap-4 w-100 flex-wrap justify-content-center">
-  <CardBarang v-for="barang in filteredBarangs" :key="barang.id" :barang="barang" />
-</transition-group>
+        <transition-group
+          name="barang"
+          tag="div"
+          class="d-flex gap-4 w-100 flex-wrap justify-content-center"
+        >
+          <CardBarang
+            v-for="barang in filteredBarangs"
+            :key="barang.id"
+            :barang="barang"
+          />
+        </transition-group>
 
-      <form v-on:submit.prevent="handleSubmit">
-        <div class="action py-2">
-          <div class="formItem" v-for="item in barangs" :key="item.id">
-            {{ item.form }}
-          </div>
-          <!-- /* Jika isCreating == false maka tombol Add Artikel tidak akan tampil */
+        <form v-on:submit.prevent="handleSubmit">
+          <div class="action py-2">
+            <div class="formItem" v-for="item in barangs" :key="item.id">
+              {{ item.form }}
+            </div>
+            <!-- /* Jika isCreating == false maka tombol Add Artikel tidak akan tampil */
 /* isCreating = !isCreating berfungsi sebagai switcher toggle */ -->
-          <button class="btn btn-primary me-2"
-            v-if="!isCreating"
-            @click.prevent="isCreating = !isCreating"
-            >Tambah Barang</button
-          >
-          <div class="add-card" v-else>
-            <div class="card mb-2">
-              <div class="card-body d-flex flex-column p-0">
-                <input
-                  v-model="form.namabarang"
-                  class="form-control border-0 mb-2"
-                  placeholder="Nama Barang"
-                  type="text"
-                  required
-                />
-                <select required v-model="form.jenisbarang" value="feature">
-                  <option disabled value="">Pilih Jenis Barang</option>
-                  <option
-                    v-for="option in options.inquiry"
-                    v-bind:key="option.value"
-                  >
-                    {{ option.text }}
-                  </option>
-                </select>
-                <input
-                  v-model="form.jumlahbarang"
-                  class="form-control border-0 mb-2"
-                  placeholder="Jumlah Barang"
-                  type="text"
-                  required
-                />
-                <input
-                  v-model="form.hargabarang"
-                  class="form-control border-0 mb-2"
-                  placeholder="harga Barang"
-                  type="text"
-                  required
-                />
-                <input
-                  v-model="form.tglmasuk"
-                  class="form-control border-0 mb-2"
-                  placeholder="Tanggal Masuk"
-                  type="date"
-                  required
-                />
-                <div class="image-upload">
-                  <label for="image-upload-input">
-                    <img
-                      v-if="form.imageurl"
-                      :src="form.imageurl"
-                      alt="Preview Image"
-                      class="img-preview"
-                    />
-                    <div v-else class="placeholder">
-                      Klik Untuk Mengupload Gambar
-                    </div>
-                  </label>
+            <button
+              class="btn btn-primary me-2"
+              v-if="!isCreating"
+              @click.prevent="isCreating = !isCreating"
+            >
+              Tambah Barang
+            </button>
+            <div class="add-card" v-else>
+              <div class="card mb-2">
+                <div class="card-body d-flex flex-column p-0">
                   <input
-                    id="image-upload-input"
-                    type="file"
-                    accept="image/*"
-                    @change="previewImage"
+                    v-model="form.namabarang"
+                    class="form-control border-0 mb-2"
+                    placeholder="Nama Barang"
+                    type="text"
+                    required
                   />
+                  <div>
+                    <p class="help is-danger" v-if="namaError">
+                      {{ namaError }}
+                    </p>
+                  </div>
+                  <select required v-model="form.jenisbarang" value="feature">
+                    <option disabled value="">Pilih Jenis Barang</option>
+                    <option
+                      v-for="option in options.inquiry"
+                      v-bind:key="option.value"
+                    >
+                      {{ option.text }}
+                    </option>
+                  </select>
+                  <input
+                    v-model="form.jumlahbarang"
+                    class="form-control border-0 mb-2"
+                    placeholder="Jumlah Barang"
+                    type="text"
+                    required
+                  />
+                  <div>
+                    <p class="help is-danger" v-if="jumlahError">
+                      {{ jumlahError }}
+                    </p>
+                  </div>
+                  <input
+                    v-model="form.hargabarang"
+                    class="form-control border-0 mb-2"
+                    placeholder="harga Barang"
+                    type="text"
+                    required
+                  />
+                  <div>
+                    <p class="help is-danger" v-if="hargaError">
+                      {{ hargaError }}
+                    </p>
+                  </div>
+                  <input
+                    v-model="form.tglmasuk"
+                    class="form-control border-0 mb-2"
+                    placeholder="Tanggal Masuk"
+                    type="date"
+                    required
+                  />
+                  <div>
+                    <p class="help is-danger" v-if="tglError">
+                      {{ tglError }}
+                    </p>
+                  </div>
+                  <div class="image-upload">
+                    <label for="image-upload-input">
+                      <img
+                        v-if="form.imageurl"
+                        :src="form.imageurl"
+                        alt="Preview Image"
+                        class="img-preview"
+                      />
+                      <div v-else class="placeholder">
+                        Klik Untuk Mengupload Gambar
+                      </div>
+                    </label>
+                    <input
+                      id="image-upload-input"
+                      type="file"
+                      accept="image/*"
+                      @change="previewImage"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="button-wrapper d-flex">
-              <button class="btn btn-primary me-2" type="submit">save</button>
-              <button
-                class="btn btn-outline-secondary"
-                @click="isCreating = !isCreating"
-              >
-                Cancel
-              </button>
+              <div class="button-wrapper d-flex">
+                <button class="btn btn-primary me-2" type="submit">save</button>
+                <button
+                  class="btn btn-outline-secondary"
+                  @click="isCreating = !isCreating"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
-  </div>
   </section>
 </template>
 <script>
 import CardBarang from "@/components/CardBarang.vue";
-import { mapState, mapMutations, mapActions } from "vuex"
+import { mapState, mapMutations, mapActions } from "vuex";
 export default {
-middleware: 'auth',  
+  middleware: "auth",
   components: {
     CardBarang,
   },
 
   data() {
     return {
+      showErrors: false,
       // Variabel penampung berdasar kategori
       cariJenis: "pilih",
       // Variabel penampung teks pencarian
@@ -164,18 +194,40 @@ middleware: 'auth',
           { value: "Lainnya", text: "Lainnya" },
         ],
       },
-      barangs: [
-
-      ],
-
+      barangs: [],
     };
   },
   computed: {
-      // barangs() {
-      //   return this.$store.state.barang.barangs;
-      //   },
+    hargaError() {
+      if (this.showErrors) {
+        if (this.form.hargabarang.length < 4) {
+          return "Harga Barang must be at least 4 characters.";
+        } else if (!/[0-9]/.test(this.form.hargabarang)) {
+          return "Harga Barang must contain number.";
+        }
+      }
+      return "";
+    },
+    namaError() {
+      if (this.showErrors && this.form.namabarang.length < 4) {
+        return "Nama Barang must be at least 4 characters.";
+      }
+      return "";
+    },
+    jumlahError() {
+      if (this.showErrors && !/[0-9]/.test(this.form.jumlahbarang)) {
+        return "Jumlah barang must contain number.";
+      }
+      return "";
+    },
+    tglError(){
+      
+    },
+    // barangs() {
+    //   return this.$store.state.barang.barangs;
+    //   },
 
-      //   ...mapState('barang', ['barangs']),
+    //   ...mapState('barang', ['barangs']),
 
     filteredBarangs() {
       let filteredBarangs = [...this.barangs];
@@ -205,7 +257,9 @@ middleware: 'auth',
   },
 
   methods: {
-    async fetchDataFromAPI() { //axios
+    async fetchDataFromAPI() {
+      //axios
+
       try {
         const response = await this.$axios.get("/barang/all"); // Replace with your API endpoint
         this.barangs = response.data; // Assuming your API response is an array of barangs
@@ -226,46 +280,54 @@ middleware: 'auth',
       }
     },
 
-    async handleSubmit() { //axios
-      try {
-        const response = await this.$axios.post("/barang/add", this.form); // Replace with your API endpoint
-        const newItem = response.data;
-        this.barangs.push(newItem);
-        // Reset the form fields after adding a barang
-        this.form = {
-          id: "",
-          namabarang: "",
-          jenisbarang: "",
-          jumlahbarang: "",
-          hargabarang: "",
-          tglmasuk: "",
-          imageurl: "",
-        };
-        this.isCreating = false;
-      } catch (error) {
-        console.error("Error creating new barang:", error);
+    async handleSubmit() {
+      //axios
+      this.showErrors = true;
+      if (
+        this.form.hargabarang.length >= 4 &&
+        this.form.namabarang.length >= 4 &&
+        /[0-9]/.test(this.form.jumlahbarang) &&
+        /[0-9]/.test(this.form.hargabarang)
+      ) {
+        try {
+          const response = await this.$axios.post("/barang/add", this.form); // Replace with your API endpoint
+          const newItem = response.data;
+          this.barangs.push(newItem);
+          // Reset the form fields after adding a barang
+          this.form = {
+            id: "",
+            namabarang: "",
+            jenisbarang: "",
+            jumlahbarang: "",
+            hargabarang: "",
+            tglmasuk: "",
+            imageurl: "",
+          };
+          this.isCreating = false;
+          this.showErrors = false;
+        } catch (error) {
+          console.error("Error creating new barang:", error);
+        }
       }
     },
-        //    async handleSubmit() { // state management
+    //    async handleSubmit() { // state management
 
-        //     this.form.id += 1
-        //     // Dispatch the addBarang action
-        //     await this.addBarang(this.form);
+    //     this.form.id += 1
+    //     // Dispatch the addBarang action
+    //     await this.addBarang(this.form);
 
-        //     this.form = {
-        //     namabarang: '',
-        //     jenisbarang: '',
-        //     jumlahbarang: '',
-        //     hargabarang: '',
-        //     tglmasuk:'',
-        //     imageurl:'',
-        //     }
-        //     this.isCreating = false;
+    //     this.form = {
+    //     namabarang: '',
+    //     jenisbarang: '',
+    //     jumlahbarang: '',
+    //     hargabarang: '',
+    //     tglmasuk:'',
+    //     imageurl:'',
+    //     }
+    //     this.isCreating = false;
 
-        // },
-        // ...mapActions('barang', ['addBarang', 'getBarangs']),
-
-
+    // },
+    // ...mapActions('barang', ['addBarang', 'getBarangs']),
   },
 };
 </script>
@@ -315,10 +377,9 @@ select option {
   width: 100%;
 }
 
-.section{
-    background:  url('static/8.webp') no-repeat;
-    background-size: cover;
-    background-position: center;
-    
+.section {
+  background: url("static/8.webp") no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 </style>

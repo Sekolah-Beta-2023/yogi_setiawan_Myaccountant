@@ -2,10 +2,7 @@
     <nav class="navbar is-dark">
     <div class="container">
     <div class="navbar-brand">
-    <button class="button navbar-burger">
-    <span></span>
-    <span></span>
-    <span></span>
+    <button class="button navbar-burger"> <i class="bi bi-list"></i>
     </button>
     </div>
     <div class="navbar-menu">
@@ -34,6 +31,7 @@
 <script>
 
 export default {
+    
 nama: 'LoginBar',
 computed: {
 

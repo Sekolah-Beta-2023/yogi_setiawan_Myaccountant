@@ -12,7 +12,9 @@
           <div class="mb-1 nama-barang">Nama {{ barang.namabarang }}</div>
           <div class="mb-1 jenis-barang">Jenis {{ barang.jenisbarang }}</div>
           <div class="mb-1 jumlah-barang">Jumlah {{ barang.jumlahbarang }}</div>
-          <div class="mb-1 harga-barang">Harga {{formatPrice(barang.hargabarang)}}</div>
+          <div class="mb-1 harga-barang">
+            Harga {{ formatPrice(barang.hargabarang) }}
+          </div>
           <div class="mb-1 tglmasuk">Tanggal Masuk {{ barang.tglmasuk }}</div>
           <div class="description-barang small text-muted"></div>
         </div>
@@ -52,6 +54,11 @@
         type="text"
         class="form-control"
       />
+      <div>
+        <p class="help is-danger" v-if="namaError">
+          {{ namaError }}
+        </p>
+      </div>
       <select v-model="editedBarang.jenisbarang" value="feature">
         <option disabled value="">Pilih Jenis Barang</option>
         <option v-for="option in options.inquiry" v-bind:key="option.value">
@@ -63,11 +70,21 @@
         type="text"
         class="form-control"
       />
+      <div>
+        <p class="help is-danger" v-if="jumlahError">
+          {{ jumlahError }}
+        </p>
+      </div>
       <input
         v-model="editedBarang.hargabarang"
         type="text"
         class="form-control"
       />
+      <div>
+        <p class="help is-danger" v-if="hargaError">
+          {{ hargaError }}
+        </p>
+      </div>
       <input v-model="editedBarang.tglmasuk" type="date" class="form-control" />
       <button @click="saveEdit" class="btn btn-success">Save</button>
       <button @click="cancelEdit" class="btn btn-secondary">Cancel</button>
@@ -88,6 +105,7 @@ export default {
   },
   data() {
     return {
+      showErrors : false,
       isEditing: false, // Track if the edit mode is active
       editedBarang: { ...this.barang }, // Initialize editedBarang with the current barang
       options: {
@@ -103,14 +121,35 @@ export default {
     };
   },
   computed: {
+    hargaError(){
+      if (this.showErrors) {
+        if (this.editedBarang.hargabarang.length < 4) {
+          return "Harga Barang must be at least 4 characters.";
+        } else if (
+          !/[0-9]/.test(this.editedBarang.hargabarang)
+        ) {
+          return "Harga Barang must contain number.";
+        }
+      }
+      return "";
+      },
+      namaError(){
+      if(this.showErrors && this.editedBarang.namabarang.length < 4){
+          return "Nama Barang must be at least 4 characters.";
+        } return "";
+      },
+      jumlahError(){
+      if(this.showErrors && !/[0-9]/.test(this.editedBarang.jumlahbarang)){
+          return "Jumlah barang must contain number.";
+        } return "";  
+      },
+
     // barangs() {
     //   return this.$store.state.barang.barangs;
     // },
-
     // ...mapState("barang", ["barangs"]),
   },
   methods: {
-
     formatPrice(num) {
       const reverse = num.toString().split("").reverse().join("");
       let result = reverse.match(/\d{1,3}/g);
@@ -125,7 +164,8 @@ export default {
       this.isEditing = true;
     },
 
-    async deleteBarang(id) { // axios
+    async deleteBarang(id) {
+      // axios
       const result = await Swal.fire({
         title: "Are you sure?",
         text: "You won't be able to revert this!",
@@ -138,12 +178,10 @@ export default {
 
       if (result.isConfirmed) {
         try {
-          await this.$axios.delete(
-            `/barang/delete/${id}`
-          ); // Replace with your API endpoint
+          await this.$axios.delete(`/barang/delete/${id}`); // Replace with your API endpoint
           this.$emit("delete-barang", this.barang);
           Swal.fire("Deleted!", "The item has been deleted.", "success");
-          window.location.reload()
+          window.location.reload();
         } catch (error) {
           console.error("Error deleting barang:", error.response);
           Swal.fire(
@@ -172,7 +210,10 @@ export default {
       }
     },
 
-    async saveEdit() {  //axios
+    async saveEdit() {
+      this.showErrors = true;
+      //axios
+      if(this.editedBarang.hargabarang.length >= 4 && this.editedBarang.namabarang.length >= 4 && /[0-9]/.test(this.editedBarang.jumlahbarang) && /[0-9]/.test(this.editedBarang.hargabarang)){
       try {
         // Send a PUT request to update the edited barang
         await this.$axios.put(
@@ -183,8 +224,10 @@ export default {
         Object.assign(this.barang, this.editedBarang);
         // After saving, disable edit mode
         this.isEditing = false;
+        this.showErrors = false;
       } catch (error) {
         console.error("Error saving edited barang:", error.response);
+      }
       }
     },
 
@@ -229,7 +272,7 @@ export default {
   margin-bottom: 1rem;
 }
 
-.img-preview{
+.img-preview {
   width: 100%;
   height: 200px;
 }
