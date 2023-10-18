@@ -27,7 +27,7 @@ Link deploy = https://myaccounta-n.vercel.app/
 5. Searching & filtering (nama,jabatan,jenis barang)
    
 
-## Setting Deploy Api
+## Setting Deploy Api to railway
 ```properties
 spring_profiles_active=prod
 PROD_DB_HOST=HOST_HERE
