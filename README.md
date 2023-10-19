@@ -10,13 +10,12 @@ Link deploy = https://myaccounta-n.vercel.app/
 ## Tech Stack
 1. Frontend : Nuxt.js 2
 2. Backend : Java with Spring Framework [https://github.com/yogiset/MyAccountant-BackEnd](https://github.com/yogiset/MyAccountant-BackEnd)
-   or check my repo with name "MyAccountant-BackEnd-0.0.1-SNAPSHOT.jar"
    if you want to run jar file dont forget to download and instal java from [https://www.oracle.com/java/technologies/downloads/](https://www.oracle.com/java/technologies/downloads/)
    you can run .jar by typing to your terminal/command prompt "java -jar example.jar". and make sure database configurations for postgres same with mine = username: postgres 
    password: admin database name : myaccountant.
    if you want to run from my repo back end, dont forget to instal maven and java jdk 17 or better version to your text editor and dont forget to changes smtp because my smtp is testing smtp it wont 
-   work for your real email,
-   also make sure your database name, username and password from postgres.   
+   work for your real email,also make sure your database name, username and password from postgres.and if you're using visual code delete application-prod.yml first because it will error if you dont 
+   delete it except you're using inteliijIdea as your text editor for java.   
 4. Database : PostgreSQL
 
 ## Features
