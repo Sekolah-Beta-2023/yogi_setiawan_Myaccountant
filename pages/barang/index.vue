@@ -402,5 +402,6 @@ select option {
   background: url("static/8.webp") no-repeat;
   background-size: cover;
   background-position: center;
+  padding: 100px;
 }
 </style>

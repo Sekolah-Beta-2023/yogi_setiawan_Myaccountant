@@ -93,5 +93,6 @@ export default {
   background: url("static/5.webp") no-repeat;
   background-size: cover;
   background-position: center;
+  padding: 100px;
 }
 </style>

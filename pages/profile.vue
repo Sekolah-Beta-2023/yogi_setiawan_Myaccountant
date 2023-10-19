@@ -69,6 +69,7 @@ computed: {
     background:  url('static/3.webp') no-repeat;
     background-size: cover;
     background-position: center;
+    padding: 100px;
     
 }
 

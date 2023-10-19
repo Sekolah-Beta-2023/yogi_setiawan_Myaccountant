@@ -400,6 +400,7 @@ export default {
   background: url("static/7.webp") no-repeat;
   background-size: cover;
   background-position: center;
+  padding: 100px;
 }
 
 select {

@@ -112,7 +112,7 @@ export default {
             // Extract the token from the response
             const jwtToken = response.data.token;
             // Store the token in localStorage
-            console.log(this.$auth.loggedIn);
+            // console.log(this.$auth.loggedIn);
             localStorage.setItem("token", jwtToken);
             this.$router.push("/profile");
           } else if (response.status === 400) {
@@ -181,5 +181,6 @@ export default {
   background: url("static/4.webp") no-repeat;
   background-size: cover;
   background-position: center;
+  padding: 100px;
 }
 </style>
