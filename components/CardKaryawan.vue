@@ -48,32 +48,53 @@
         v-model="editedKaryawan.kodekaryawan"
         type="text"
         class="form-control"
+        required
       />
-      <input v-model="editedKaryawan.nama" type="text" class="form-control" />
+      <input
+        v-model="editedKaryawan.nama"
+        required
+        type="text"
+        class="form-control"
+      />
       <div>
         <p class="help is-danger" v-if="namaError">
           {{ namaError }}
         </p>
       </div>
-      <select v-model="editedKaryawan.jabatan" value="feature">
+      <select v-model="editedKaryawan.jabatan" required value="feature">
         <option disabled value="">Pilih Jabatan</option>
         <option v-for="option in options.inquiry" v-bind:key="option.value">
           {{ option.text }}
         </option>
       </select>
-      <input v-model="editedKaryawan.umur" type="text" class="form-control" />
+      <input
+        v-model="editedKaryawan.umur"
+        required
+        type="text"
+        class="form-control"
+      />
       <div>
         <p class="help is-danger" v-if="umurError">
           {{ umurError }}
         </p>
       </div>
-      <input v-model="editedKaryawan.phone" type="text" class="form-control" />
+      <input
+        v-model="editedKaryawan.phone"
+        required
+        type="text"
+        class="form-control"
+      />
       <div>
         <p class="help is-danger" v-if="phoneError">
           {{ phoneError }}
         </p>
       </div>
-      <input v-model="editedKaryawan.email" type="text" class="form-control" />
+      <input
+        v-model="editedKaryawan.email"
+        required
+        type="text"
+        class="form-control"
+      />
       <div>
         <p class="help is-danger" v-if="emailError">
           {{ emailError }}
@@ -81,9 +102,16 @@
       </div>
       <input
         v-model="editedKaryawan.tgl_lahir"
-        type="date"
+        type="text"
+        onfocus="(this.type='date')"
+        onblur="(this.type='text')"
+        placeholder="Tanggal Lahir"
         class="form-control"
+        required
       />
+      <p class="help is-danger" v-if="tanggalError">
+        {{ tanggalError }}
+      </p>
       <button @click="saveEdit" class="btn btn-success">Save</button>
       <button @click="cancelEdit" class="btn btn-secondary">Cancel</button>
     </div>
@@ -104,10 +132,15 @@ export default {
       required: true,
       default: "Untitled",
     },
+    karyawans: {
+      // Define the karyawans prop
+      type: Array,
+      required: true,
+      default: () => [],
+    },
   },
   data() {
     return {
-      
       error: null,
       showErrors: false,
       isEditing: false, // Track if the edit mode is active
@@ -129,6 +162,8 @@ export default {
     };
   },
   methods: {
+
+
     editKaryawan() {
       this.error = null;
       // Set editedKaryawan to a copy of the current karyawan
@@ -226,15 +261,23 @@ export default {
       this.showErrors = true;
       this.error = null;
 
+      // Validate the "tanggal lahir" field and calculate the age
+      const birthDate = new Date(this.editedKaryawan.tgl_lahir);
+      const currentDate = new Date();
+      const age = currentDate.getFullYear() - birthDate.getFullYear();
 
-
+      if (age < 20 || age > 100) {
+        return;
+      }
       //axios
       if (
         this.editedKaryawan.nama.length >= 3 &&
         this.editedKaryawan.email.length >= 14 &&
         this.editedKaryawan.phone.length >= 10 &&
         /[0-9]/.test(this.editedKaryawan.phone) &&
-        /[0-9]/.test(this.editedKaryawan.umur)
+        /[0-9]/.test(this.editedKaryawan.umur) &&
+        age >= 20 &&
+        age <= 100
       ) {
         try {
           // Send a PUT request to update the edited karyawan
@@ -286,6 +329,19 @@ export default {
           return "Phone Number must be at least 10 characters.";
         } else if (!/[0-9]/.test(this.editedKaryawan.phone)) {
           return "Phone Number must contain number.";
+        }
+      }
+      return "";
+    },
+    tanggalError() {
+      if (this.showErrors && this.editedKaryawan.tgl_lahir) {
+        const birthDate = new Date(this.editedKaryawan.tgl_lahir);
+        const currentDate = new Date();
+        const age = currentDate.getFullYear() - birthDate.getFullYear();
+
+        // Check if age is outside the desired range (20 to 100)
+        if (age < 20 || age > 100) {
+          return "Tanggal lahir must be between 20 and 100 years old.";
         }
       }
       return "";

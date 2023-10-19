@@ -46,6 +46,7 @@
             v-for="karyawan in filteredKaryawans"
             :key="karyawan.id"
             :karyawan="karyawan"
+            :karyawans="karyawans"
           />
         </transition-group>
 
@@ -113,24 +114,17 @@
                     </p>
                   </div>
                   <input
-                    v-model="form.umur"
-                    class="form-control border-0 mb-2"
-                    required
-                    placeholder="Umur"
-                    type="text"
-                  />
-                  <div>
-                    <p class="help is-danger" v-if="umurError">
-                      {{ umurError }}
-                    </p>
-                  </div>
-                  <input
                     v-model="form.tgl_lahir"
                     class="form-control border-0 mb-2"
                     required
                     placeholder="Tanggal Lahir"
-                    type="date"
+                    type="text"
+                    onfocus="(this.type='date')"
+                    onblur="(this.type='text')"
                   />
+                  <p class="help is-danger" v-if="tanggalError">
+                    {{ tanggalError }}
+                  </p>
                   <div class="image-upload">
                     <label for="image-upload-input">
                       <img
@@ -173,13 +167,11 @@ import CardKaryawan from "@/components/CardKaryawan.vue";
 import { mapState, mapMutations, mapActions } from "vuex";
 import Notification from "~/components/Notification";
 
-
 export default {
   middleware: "auth",
   components: {
     CardKaryawan,
     Notification,
-
   },
 
   data() {
@@ -234,18 +226,26 @@ export default {
       }
       return "";
     },
-    umurError() {
-      if (this.showErrors && !/[0-9]/.test(this.form.umur)) {
-        return "Umur must contain number.";
-      }
-      return "";
-    },
+
     phoneError() {
       if (this.showErrors) {
         if (this.form.phone.length < 10) {
           return "Phone Number must be at least 10 characters.";
         } else if (!/[0-9]/.test(this.form.phone)) {
           return "Phone Number must contain number.";
+        }
+      }
+      return "";
+    },
+    tanggalError() {
+      if (this.showErrors && this.form.tgl_lahir) {
+        const birthDate = new Date(this.form.tgl_lahir);
+        const currentDate = new Date();
+        const age = currentDate.getFullYear() - birthDate.getFullYear();
+
+        // Check if age is outside the desired range (20 to 100)
+        if (age < 20 || age > 100) {
+          return "Tanggal lahir must be between 20 and 100 years old.";
         }
       }
       return "";
@@ -310,6 +310,15 @@ export default {
       this.showErrors = true;
       //axios
 
+      // Validate the "tanggal lahir" field and calculate the age
+      const birthDate = new Date(this.form.tgl_lahir);
+      const currentDate = new Date();
+      const age = currentDate.getFullYear() - birthDate.getFullYear();
+
+      if (age < 20 || age > 100) {
+        return;
+      }
+
       const isEmailExists = this.karyawans.some(
         (karyawan) => karyawan.email === this.form.email
       );
@@ -325,7 +334,7 @@ export default {
       }
 
       if (isPhoneExists) {
-        this.$data.error= "Phone already exists";
+        this.$data.error = "Phone already exists";
         return;
       } else {
         this.$data.error = "";
@@ -336,7 +345,8 @@ export default {
         this.form.email.length >= 14 &&
         this.form.phone.length >= 10 &&
         /[0-9]/.test(this.form.phone) &&
-        /[0-9]/.test(this.form.umur)
+        age >= 20 &&
+        age <= 100
       ) {
         try {
           const response = await this.$axios.post("/karyawan/add", this.form); // Replace with your API endpoint

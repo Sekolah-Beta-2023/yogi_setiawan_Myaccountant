@@ -48,18 +48,20 @@
         v-model="editedBarang.kodebarang"
         type="text"
         class="form-control"
+        required
       />
       <input
         v-model="editedBarang.namabarang"
         type="text"
         class="form-control"
+        required
       />
       <div>
         <p class="help is-danger" v-if="namaError">
           {{ namaError }}
         </p>
       </div>
-      <select v-model="editedBarang.jenisbarang" value="feature">
+      <select v-model="editedBarang.jenisbarang" required value="feature">
         <option disabled value="">Pilih Jenis Barang</option>
         <option v-for="option in options.inquiry" v-bind:key="option.value">
           {{ option.text }}
@@ -69,6 +71,7 @@
         v-model="editedBarang.jumlahbarang"
         type="text"
         class="form-control"
+        required
       />
       <div>
         <p class="help is-danger" v-if="jumlahError">
@@ -79,13 +82,27 @@
         v-model="editedBarang.hargabarang"
         type="text"
         class="form-control"
+        required
       />
       <div>
         <p class="help is-danger" v-if="hargaError">
           {{ hargaError }}
         </p>
       </div>
-      <input v-model="editedBarang.tglmasuk" type="date" class="form-control" />
+      <input
+        v-model="editedBarang.tglmasuk"
+        type="text"
+        onfocus="(this.type='date')"
+        onblur="(this.type='text')"
+        placeholder="Tanggal Masuk"
+        class="form-control"
+        required
+      />
+      <div>
+        <p class="help is-danger" v-if="tanggalError">
+          {{ tanggalError }}
+        </p>
+      </div>
       <button @click="saveEdit" class="btn btn-success">Save</button>
       <button @click="cancelEdit" class="btn btn-secondary">Cancel</button>
     </div>
@@ -105,7 +122,7 @@ export default {
   },
   data() {
     return {
-      showErrors : false,
+      showErrors: false,
       isEditing: false, // Track if the edit mode is active
       editedBarang: { ...this.barang }, // Initialize editedBarang with the current barang
       options: {
@@ -121,28 +138,41 @@ export default {
     };
   },
   computed: {
-    hargaError(){
+    hargaError() {
       if (this.showErrors) {
-        if (this.editedBarang.hargabarang.length < 4) {
-          return "Harga Barang must be at least 4 characters.";
-        } else if (
-          !/[0-9]/.test(this.editedBarang.hargabarang)
-        ) {
+        if (this.editedBarang.hargabarang.length < 3) {
+          return "Harga Barang must be at least 3 characters.";
+        } else if (!/[0-9]/.test(this.editedBarang.hargabarang)) {
           return "Harga Barang must contain number.";
         }
       }
       return "";
-      },
-      namaError(){
-      if(this.showErrors && this.editedBarang.namabarang.length < 4){
-          return "Nama Barang must be at least 4 characters.";
-        } return "";
-      },
-      jumlahError(){
-      if(this.showErrors && !/[0-9]/.test(this.editedBarang.jumlahbarang)){
-          return "Jumlah barang must contain number.";
-        } return "";  
-      },
+    },
+    namaError() {
+      if (this.showErrors && this.editedBarang.namabarang.length < 4) {
+        return "Nama Barang must be at least 4 characters.";
+      }
+      return "";
+    },
+    jumlahError() {
+      if (this.showErrors && !/[0-9]/.test(this.editedBarang.jumlahbarang)) {
+        return "Jumlah barang must contain number.";
+      }
+      return "";
+    },
+    tanggalError() {
+      if (this.showErrors && this.editedBarang.tglmasuk) {
+        const birthDate = new Date(this.editedBarang.tglmasuk);
+        const currentDate = new Date();
+        const age = currentDate.getFullYear() - birthDate.getFullYear();
+
+        // Check if age is outside the desired range (20 to 100)
+        if (age > 20 ) {
+          return "Tanggal Masuk must be less than 20 years old";
+        }
+      }
+      return "";
+    },
 
     // barangs() {
     //   return this.$store.state.barang.barangs;
@@ -212,22 +242,37 @@ export default {
 
     async saveEdit() {
       this.showErrors = true;
-      //axios
-      if(this.editedBarang.hargabarang.length >= 4 && this.editedBarang.namabarang.length >= 4 && /[0-9]/.test(this.editedBarang.jumlahbarang) && /[0-9]/.test(this.editedBarang.hargabarang)){
-      try {
-        // Send a PUT request to update the edited barang
-        await this.$axios.put(
-          `/barang/update/${this.editedBarang.id}`,
-          this.editedBarang
-        ); // Replace with your API endpoint
-        // Update the original barang with edited values
-        Object.assign(this.barang, this.editedBarang);
-        // After saving, disable edit mode
-        this.isEditing = false;
-        this.showErrors = false;
-      } catch (error) {
-        console.error("Error saving edited barang:", error.response);
+
+        const birthDate = new Date(this.editedBarang.tglmasuk);
+        const currentDate = new Date();
+        const age = currentDate.getFullYear() - birthDate.getFullYear();
+        // Check if age is outside the desired range 20
+      if (age > 20 ) {
+        return;
       }
+
+      //axios
+      if (
+        // this.editedBarang.hargabarang.length >= 3 &&
+        this.editedBarang.namabarang.length >= 4 &&
+        /[0-9]/.test(this.editedBarang.jumlahbarang) &&
+        /[0-9]/.test(this.editedBarang.hargabarang) &&
+        age <= 20
+      ) {
+        try {
+          // Send a PUT request to update the edited barang
+          await this.$axios.put(
+            `/barang/update/${this.editedBarang.id}`,
+            this.editedBarang
+          ); // Replace with your API endpoint
+          // Update the original barang with edited values
+          Object.assign(this.barang, this.editedBarang);
+          // After saving, disable edit mode
+          this.isEditing = false;
+          this.showErrors = false;
+        } catch (error) {
+          console.error("Error saving edited barang:", error.response);
+        }
       }
     },
 

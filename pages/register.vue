@@ -113,9 +113,7 @@ export default {
       if (this.showErrors) {
         if (this.contactNumber.length < 10) {
           return "Phone Number must be at least 10 characters.";
-        } else if (
-          !/[0-9]/.test(this.contactNumber)
-        ) {
+        } else if (!/[0-9]/.test(this.contactNumber)) {
           return "Phone Number must contain number.";
         }
       }
@@ -140,7 +138,6 @@ export default {
       }
       return "";
     },
-    
   },
 
   methods: {

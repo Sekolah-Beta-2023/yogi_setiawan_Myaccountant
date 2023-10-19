@@ -110,12 +110,14 @@
                     v-model="form.tglmasuk"
                     class="form-control border-0 mb-2"
                     placeholder="Tanggal Masuk"
-                    type="date"
                     required
+                    type="text"
+                    onfocus="(this.type='date')"
+                    onblur="(this.type='text')"
                   />
                   <div>
-                    <p class="help is-danger" v-if="tglError">
-                      {{ tglError }}
+                    <p class="help is-danger" v-if="tanggalError">
+                      {{ tanggalError }}
                     </p>
                   </div>
                   <div class="image-upload">
@@ -220,8 +222,18 @@ export default {
       }
       return "";
     },
-    tglError(){
-      
+    tanggalError() {
+      if (this.showErrors && this.form.tglmasuk) {
+        const birthDate = new Date(this.form.tglmasuk);
+        const currentDate = new Date();
+        const age = currentDate.getFullYear() - birthDate.getFullYear();
+
+        // Check if age is outside the desired range (20 to 100)
+        if (age > 20) {
+          return "Tanggal Masuk must be less than 20 years old";
+        }
+      }
+      return "";
     },
     // barangs() {
     //   return this.$store.state.barang.barangs;
@@ -281,13 +293,22 @@ export default {
     },
 
     async handleSubmit() {
-      //axios
       this.showErrors = true;
+      //axios
+      const birthDate = new Date(this.form.tglmasuk);
+      const currentDate = new Date();
+      const age = currentDate.getFullYear() - birthDate.getFullYear();
+      // Check if age is outside the desired range 20
+      if (age > 20) {
+        return;
+      }
+
       if (
         this.form.hargabarang.length >= 4 &&
         this.form.namabarang.length >= 4 &&
         /[0-9]/.test(this.form.jumlahbarang) &&
-        /[0-9]/.test(this.form.hargabarang)
+        /[0-9]/.test(this.form.hargabarang) &&
+        age <= 20
       ) {
         try {
           const response = await this.$axios.post("/barang/add", this.form); // Replace with your API endpoint
