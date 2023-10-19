@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer">
+  <footer class="footer bg-dark">
     <div class="container">
       <p>&copy; 2023 MyAccountant. All rights reserved.</p>
     </div>
@@ -7,8 +7,7 @@
 </template>
 
 <style scoped>
-.footer {
-  background-color: #333; /* Background color for the footer */
+.footer { 
   color: #fff; /* Text color for the footer */
   padding: 20px 0; /* Padding for top and bottom */
   text-align: center; /* Center-align text */
