@@ -135,35 +135,43 @@ export default {
               }
             );
 
-            if (response) {
-              if (response.status === 200) {
-                this.messageEmail = response.data.message;
+            if (this.oldPassword === this.newPassword) {
+              this.error =
+                "Your old password cant be same with your new password, please change it for your safety !";
+              setTimeout(() => {
                 this.error = null;
-                this.oldPassword = "";
-                this.newPassword = "";
-
-                setTimeout(() => {
-                  this.messageEmail = null;
-                }, 5000);
-              } else if (response.status === 400) {
-                console.log("Bad Request Response Data:", response.data);
-                this.error = response.data.message;
-                this.messageEmail = null;
-
-                setTimeout(() => {
+              }, 5000);
+            } else {
+              if (response) {
+                if (response.status === 200) {
+                  this.messageEmail = response.data.message;
                   this.error = null;
-                }, 5000);
+                  this.oldPassword = "";
+                  this.newPassword = "";
+
+                  setTimeout(() => {
+                    this.messageEmail = null;
+                  }, 5000);
+                } else if (response.status === 400) {
+                  console.log("Bad Request Response Data:", response.data);
+                  this.error = response.data.message;
+                  this.messageEmail = null;
+
+                  setTimeout(() => {
+                    this.error = null;
+                  }, 5000);
+                } else {
+                  this.error = "Unexpected response from the server.";
+                  setTimeout(() => {
+                    this.error = null;
+                  }, 5000);
+                }
               } else {
-                this.error = "Unexpected response from the server.";
+                this.error = "No response from the server.";
                 setTimeout(() => {
                   this.error = null;
                 }, 5000);
               }
-            } else {
-              this.error = "No response from the server.";
-              setTimeout(() => {
-                this.error = null;
-              }, 5000);
             }
           } else {
             this.error = "Invalid or missing authentication token.";
