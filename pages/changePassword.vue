@@ -22,7 +22,7 @@
               </div>
               <p class="help is-danger" v-if="passwordError">
                 {{ passwordError }}
-              </p> 
+              </p>
             </div>
             <div class="field">
               <label class="label">New Password</label>
@@ -64,7 +64,7 @@ export default {
 
   data() {
     return {
-      showErrors : false,
+      showErrors: false,
       oldPassword: "",
       newPassword: "",
       error: null,
@@ -72,17 +72,17 @@ export default {
     };
   },
 
-
   mounted() {},
 
-  computed:{
-      passwordError(){
-        if(this.showErrors && this.oldPassword.length < 6){
-          return "Password must be at least 6 characters.";
-        } return "";
-      },
+  computed: {
+    passwordError() {
+      if (this.showErrors && this.oldPassword.length < 6) {
+        return "Password must be at least 6 characters.";
+      }
+      return "";
+    },
 
-        passwordError2() {
+    passwordError2() {
       if (this.showErrors) {
         if (this.newPassword.length < 6) {
           return "Password must be at least 6 characters.";
@@ -101,62 +101,84 @@ export default {
     async changepassword() {
       this.showErrors = true;
 
-      if(this.oldPassword.length >= 6 && this.newPassword.length >= 6 &&
+      if (
+        this.oldPassword.length >= 6 &&
+        this.newPassword.length >= 6 &&
         /[A-Z]/.test(this.newPassword) &&
-        /[a-z]/.test(this.newPassword)){
+        /[a-z]/.test(this.newPassword)
+      ) {
+        try {
+          const jwtToken = localStorage.getItem("token");
+          console.log("token", jwtToken);
 
-      try {
-        const jwtToken = localStorage.getItem("token");
-        console.log("token", jwtToken);
+          // Decode the JWT token to extract the email using jsonwebtoken
+          const decodedToken = jwt.decode(jwtToken);
+          console.log("decodedToken", decodedToken);
 
-        // Decode the JWT token to extract the email using jsonwebtoken
-        const decodedToken = jwt.decode(jwtToken);
-        console.log("decodedToken", decodedToken);
+          if (decodedToken) {
+            const userEmail = decodedToken.sub; //'sub' contains the email
+            console.log("userEmail", userEmail);
 
-        if (decodedToken) {
-          const userEmail = decodedToken.sub; //'sub' contains the email
-          console.log("userEmail", userEmail);
-
-          const response = await this.$axios.post(
-            "/user/changePassword",
-            {
-              oldPassword: this.oldPassword,
-              newPassword: this.newPassword,
-              email: userEmail, // Send the email to the API
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${jwtToken}`,
+            const response = await this.$axios.post(
+              "/user/changePassword",
+              {
+                oldPassword: this.oldPassword,
+                newPassword: this.newPassword,
+                email: userEmail, // Send the email to the API
               },
-            }
-          );
+              {
+                headers: {
+                  Authorization: `Bearer ${jwtToken}`,
+                },
+              }
+            );
 
-          if (response) {
-            if (response.status === 200) {
-              this.messageEmail = response.data.message;
-              this.error = null;
-              this.oldPassword = "";
-              this.newPassword = "";
-            } else if (response.status === 400) {
-              console.log("Bad Request Response Data:", response.data);
-              this.error = response.data.message;
-              this.messageEmail = null;
+            if (response) {
+              if (response.status === 200) {
+                this.messageEmail = response.data.message;
+                this.error = null;
+                this.oldPassword = "";
+                this.newPassword = "";
+
+                setTimeout(() => {
+                  this.messageEmail = null;
+                }, 5000);
+              } else if (response.status === 400) {
+                console.log("Bad Request Response Data:", response.data);
+                this.error = response.data.message;
+                this.messageEmail = null;
+
+                setTimeout(() => {
+                  this.error = null;
+                }, 5000);
+              } else {
+                this.error = "Unexpected response from the server.";
+                setTimeout(() => {
+                  this.error = null;
+                }, 5000);
+              }
             } else {
-              this.error = "Unexpected response from the server.";
+              this.error = "No response from the server.";
+              setTimeout(() => {
+                this.error = null;
+              }, 5000);
             }
           } else {
-            this.error = "No response from the server.";
+            this.error = "Invalid or missing authentication token.";
+            setTimeout(() => {
+              this.error = null;
+            }, 5000);
           }
-        } else {
-          this.error = "Invalid or missing authentication token.";
-        } 
           this.showErrors = false;
-      } catch (e) {
-        this.error = e.response.data.message;
-        this.messageEmail = null;
-      }
+        } catch (e) {
+          this.error = e.response.data.message;
+          this.messageEmail = null;
 
-    } 
+          setTimeout(() => {
+            this.error = null;
+          }, 5000);
+        }
+      }
     },
   },
 };

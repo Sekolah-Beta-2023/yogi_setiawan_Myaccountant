@@ -64,7 +64,7 @@ export default {
 
   data() {
     return {
-      showErrors : false,
+      showErrors: false,
       email: "",
       password: "",
       jwtToken: "",
@@ -78,64 +78,80 @@ export default {
     // }
   },
 
-  computed:{
-      emailError(){
-        if(this.showErrors && this.email.length < 14){
-          return 'Email must be at least 14 characters.';
-        } return "";
-      },
-      passwordError(){
-      
-        if (this.showErrors && this.password.length < 6) {
-          return "Password must be at least 6 characters.";
-        } return "";
-      
+  computed: {
+    emailError() {
+      if (this.showErrors && this.email.length < 14) {
+        return "Email must be at least 14 characters.";
       }
-
+      return "";
+    },
+    passwordError() {
+      if (this.showErrors && this.password.length < 6) {
+        return "Password must be at least 6 characters.";
+      }
+      return "";
+    },
   },
 
   methods: {
     async login() {
       this.showErrors = true;
-      if(this.email.length >= 14 && this.password.length >= 6){
-      try {
-        const response = await this.$auth.loginWith("local", {
-          data: {
-            email: this.email,
-            password: this.password,
-            
-          },
-        });
+      if (this.email.length >= 14 && this.password.length >= 6) {
+        try {
+          const response = await this.$auth.loginWith("local", {
+            data: {
+              email: this.email,
+              password: this.password,
+            },
+          });
 
-        if (response) {
-          if (response.data && response.data.token && response.status === 200) {
-            // Extract the token from the response
-            const jwtToken = response.data.token;
-            // Store the token in localStorage
-            // console.log(this.$auth.loggedIn);
-            localStorage.setItem("token", jwtToken);
-            this.$router.push("/profile");
-          } else if (response.status === 400) {
-            this.error = response.data.message;
+          if (response) {
+            if (
+              response.data &&
+              response.data.token &&
+              response.status === 200
+            ) {
+              // Extract the token from the response
+              const jwtToken = response.data.token;
+              // Store the token in localStorage
+              // console.log(this.$auth.loggedIn);
+              localStorage.setItem("token", jwtToken);
+              this.$router.push("/profile");
+            } else if (response.status === 400) {
+              this.error = response.data.message;
+              setTimeout(() => {
+                this.error = null;
+              }, 5000);
+            } else {
+              setTimeout(() => {
+                this.error = null;
+              }, 5000);
+              // Handle the case where the response doesn't contain the expected data
+              this.error = "Unexpected response from the server.";
+            }
           } else {
-            // Handle the case where the response doesn't contain the expected data
-            this.error = "Unexpected response from the server.";
+            setTimeout(() => {
+              this.error = null;
+            }, 5000);
+            // Handle the case where the response is undefined
+            this.error = "No response from the server.";
           }
-        } else {
-          // Handle the case where the response is undefined
-          this.error = "No response from the server.";
-        } this.showErrors = false;
-      } catch (e) {
-        if (e.response && e.response.data && e.response.data.message) {
-          this.error = e.response.data.message;
-        } else {
-          // Handle any other unexpected errors
-          this.error = "An error occurred while processing your request.";
+          this.showErrors = false;
+        } catch (e) {
+          if (e.response && e.response.data && e.response.data.message) {
+            this.error = e.response.data.message;
+            setTimeout(() => {
+              this.error = null;
+            }, 5000);
+          } else {
+            setTimeout(() => {
+              this.error = null;
+            }, 5000);
+            // Handle any other unexpected errors
+            this.error = "An error occurred while processing your request.";
+          }
         }
       }
-
-      }
-
     },
 
     // async login() {

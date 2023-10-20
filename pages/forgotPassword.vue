@@ -47,43 +47,56 @@ export default {
   },
   data() {
     return {
-      showErrors : false,  
+      showErrors: false,
       email: "",
       error: null,
       messageEmail: null,
     };
   },
   computed: {
-    emailError(){
-        if(this.showErrors && this.email.length <14){
-            return "Email must be at least 14 characters.";
-        }
+    emailError() {
+      if (this.showErrors && this.email.length < 14) {
+        return "Email must be at least 14 characters.";
+      }
     },
   },
   methods: {
     async forgotpassword() {
       this.showErrors = true;
-      if(this.email.length >= 14){   
-      try {
-        const response = await this.$axios.post("/user/forgotPassword", {
-          email: this.email,
-          
-        });
-        if (response.status === 200) {
-          this.messageEmail = response.data.message;
-          this.error = null;
-        } else if (response.status === 500) {
-          this.error = response.data.message;
-          this.messageEmail = null;
-        }
+      if (this.email.length >= 14) {
+        try {
+          const response = await this.$axios.post("/user/forgotPassword", {
+            email: this.email,
+          });
+          if (response.status === 200) {
+            this.messageEmail = response.data.message;
+            this.error = null;
 
-        this.email = "";
-        this.showErrors = false;
-      } catch (e) {
-        this.error = e.response.data.message;
-        this.messageEmail = null;
+            setTimeout(() => {
+              this.messageEmail = null;
+            }, 5000);
+
+            setTimeout(() => {
+              this.$router.push("/login");
+            }, 10000);
+          } else if (response.status === 500) {
+            this.error = response.data.message;
+            this.messageEmail = null;
+            setTimeout(() => {
+              this.error = null;
+            }, 5000);
+          }
+
+          this.email = "";
+          this.showErrors = false;
+        } catch (e) {
+          this.error = e.response.data.message;
+          this.messageEmail = null;
+          setTimeout(() => {
+            this.error = null;
+          }, 5000);
+        }
       }
-      }  
     },
   },
 };

@@ -164,9 +164,15 @@ export default {
           if (response.status === 200) {
             this.messageEmail = response.data.message;
             this.error = null;
+            setTimeout(() => {
+              this.$router.push("/login");
+            }, 10000);
           } else if (response.status === 400) {
             this.error = response.data.message;
             this.messageEmail = null;
+            setTimeout(() => {
+              this.error = null;
+            }, 5000);
           }
 
           this.name = "";
@@ -178,6 +184,9 @@ export default {
         } catch (e) {
           this.error = e.response.data.message;
           this.messageEmail = null;
+          setTimeout(() => {
+            this.error = null;
+          }, 5000);
         }
       }
     },
@@ -191,5 +200,4 @@ export default {
   background-position: center;
   padding: 100px;
 }
-
 </style>
