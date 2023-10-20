@@ -88,9 +88,10 @@ export default {
           return "Password must be at least 6 characters.";
         } else if (
           !/[A-Z]/.test(this.newPassword) ||
-          !/[a-z]/.test(this.newPassword)
+          !/[a-z]/.test(this.newPassword) ||
+          !/[!@#$%^&*()_+-=\[\]{};:'",.<>/?\\|]/.test(this.newPassword)
         ) {
-          return "Password must contain at least one uppercase and one lowercase letter.";
+          return "Password must contain at least one uppercase letter, one lowercase letter, and one symbol from the allowed set.";
         }
       }
       return "";
@@ -105,7 +106,8 @@ export default {
         this.oldPassword.length >= 6 &&
         this.newPassword.length >= 6 &&
         /[A-Z]/.test(this.newPassword) &&
-        /[a-z]/.test(this.newPassword)
+        /[a-z]/.test(this.newPassword) &&
+        /[!@#$%^&*()_+-=\[\]{};:'",.<>/?\\|]/.test(this.newPassword)
       ) {
         try {
           const jwtToken = localStorage.getItem("token");

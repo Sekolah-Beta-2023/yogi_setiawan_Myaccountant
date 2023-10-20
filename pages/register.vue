@@ -131,9 +131,10 @@ export default {
           return "Password must be at least 6 characters.";
         } else if (
           !/[A-Z]/.test(this.password) ||
-          !/[a-z]/.test(this.password)
+          !/[a-z]/.test(this.password) ||
+          !/[!@#$%^&*()_+-=\[\]{};:'",.<>/?\\|]/.test(this.password)
         ) {
-          return "Password must contain at least one uppercase and one lowercase letter.";
+          return "Password must contain at least one uppercase letter, one lowercase letter, and one symbol from the allowed set.";
         }
       }
       return "";
@@ -151,7 +152,8 @@ export default {
         this.password.length >= 6 &&
         /[A-Z]/.test(this.password) &&
         /[a-z]/.test(this.password) &&
-        /[0-9]/.test(this.contactNumber)
+        /[!@#$%^&*()_+-=\[\]{};:'",.<>/?\\|]/.test(this.password) &&
+        /[0-9]/.test(this.contactNumber)        
       ) {
         try {
           const response = await this.$axios.post("/user/register", {
