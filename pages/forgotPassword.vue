@@ -16,6 +16,7 @@
                   name="email"
                   v-model="email"
                   required
+                  placeholder="@Example.com"
                 />
               </div>
               <p class="help is-danger" v-if="emailError">{{ emailError }}</p>

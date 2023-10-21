@@ -17,6 +17,7 @@
                   name="name"
                   v-model="name"
                   required
+                  placeholder="Example = Yogi.S_01"
                 />
               </div>
               <p class="help is-danger" v-if="nameError">{{ nameError }}</p>
@@ -24,13 +25,27 @@
 
             <div class="field">
               <label class="label">Phone Number</label>
-              <div class="control">
+              <div class="control is-flex">
+                <div class="select" style="width: 40%;">
+                  <select v-model="selectedCountryCode" required>
+                    <option disabled value="">Country ID</option>
+                    <option
+                      v-for="country in countryCodes"
+                      :key="country.code"
+                      :value="country.code"
+                    >
+                      {{ country.name }} ({{ country.code }})
+                    </option>
+                  </select>
+                </div>
                 <input
                   type="text"
                   class="input"
                   name="contactNumber"
                   v-model="contactNumber"
                   required
+                  placeholder="Phone Number"
+                  style="width: 60%;"
                 />
               </div>
               <p class="help is-danger" v-if="contactNumberError">
@@ -46,6 +61,7 @@
                   class="input"
                   name="email"
                   v-model="email"
+                  placeholder="@Example.com"
                   required
                 />
               </div>
@@ -61,6 +77,7 @@
                   name="password"
                   v-model="password"
                   required
+                  placeholder="******"
                 />
               </div>
               <p class="help is-danger" v-if="passwordError">
@@ -95,11 +112,26 @@ export default {
     return {
       showErrors: false,
       name: "",
+      selectedCountryCode: "+62",
       contactNumber: "",
       email: "",
       password: "",
       error: null,
       messageEmail: null,
+      countryCodes: [
+        { name: "US", code: "+1" },
+        { name: "UK", code: "+44" },
+        { name: "AU", code: "+61" },
+        { name: "GM", code: "+49" },
+        { name: "FR", code: "+33" },
+        { name: "JP", code: "+81" },
+        { name: "SG", code: "+65" },
+        { name: "MY", code: "+60" },
+        { name: "TH", code: "+66" },
+        { name: "ID", code: "+62" },
+        { name: "VN", code: "+84" },
+        { name: "PH", code: "+63" },
+      ],
     };
   },
   computed: {
@@ -155,12 +187,12 @@ export default {
         /[a-z]/.test(this.password) &&
         /[0-9]/.test(this.password) &&
         /[!@#$%^&*()_+-=\[\]{};:'",.<>/?\\|]/.test(this.password) &&
-        /[0-9]/.test(this.contactNumber)        
+        /[0-9]/.test(this.contactNumber)
       ) {
         try {
           const response = await this.$axios.post("/user/register", {
             name: this.name,
-            contactNumber: this.contactNumber,
+            contactNumber: this.selectedCountryCode + this.contactNumber,
             email: this.email,
             password: this.password,
           });

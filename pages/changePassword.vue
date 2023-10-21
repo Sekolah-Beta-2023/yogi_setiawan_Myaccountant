@@ -18,6 +18,7 @@
                   name="oldpassword"
                   v-model="oldPassword"
                   required
+                  placeholder="******"
                 />
               </div>
               <p class="help is-danger" v-if="passwordError">
@@ -33,6 +34,7 @@
                   name="newpassword"
                   v-model="newPassword"
                   required
+                  placeholder="******"
                 />
               </div>
               <p class="help is-danger" v-if="passwordError2">
