@@ -78,6 +78,7 @@
           {{ umurError }}
         </p>
       </div>
+
       <input
         v-model="editedKaryawan.phone"
         required
@@ -89,6 +90,7 @@
           {{ phoneError }}
         </p>
       </div>
+
       <input
         v-model="editedKaryawan.email"
         required
@@ -162,12 +164,11 @@ export default {
     };
   },
   methods: {
-
-
     editKaryawan() {
       this.error = null;
       // Set editedKaryawan to a copy of the current karyawan
       this.editedKaryawan = { ...this.karyawan };
+
       // Enable edit mode
       this.isEditing = true;
     },

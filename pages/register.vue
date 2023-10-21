@@ -99,6 +99,23 @@
                 {{ passwordError2 }}
               </p>
             </div>
+            <div class="field" style="display: flex; align-items: center">
+              <div class="control" style="margin-right: 10px">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  name="checkbox"
+                  v-model="checkBox"
+                  required
+                />
+              </div>
+              <label class="label" style="margin: 0"
+                >I agree with term and conditions</label
+              >
+              <p class="help is-danger" v-if="checkError">
+                {{ checkError }}
+              </p>
+            </div>
 
             <div class="control">
               <button type="submit" class="button is-dark is-fullwidth">
@@ -131,7 +148,8 @@ export default {
       contactNumber: "",
       email: "",
       password: "",
-      confirmPassword:"",
+      confirmPassword: "",
+      checkBox: false,
       error: null,
       messageEmail: null,
       countryCodes: [
@@ -189,17 +207,18 @@ export default {
       return "";
     },
 
-        passwordError2() {
-      if (this.showErrors && !this.confirmPassword === !this.password) {
-          return "Password and Confirm password must be same !";       
+    passwordError2() {
+      if (this.showErrors && this.confirmPassword !== this.password) {
+        return "Password and Confirm password must be the same!";
       }
       return "";
     },
-
-
-
-
-
+    checkError() {
+      if (this.showErrors && this.checkBox === false) {
+        return "Dont forget to agree for term and conditions !";
+      }
+      return "";
+    },
   },
 
   methods: {
@@ -244,7 +263,8 @@ export default {
           this.contactNumber = "";
           this.email = "";
           this.password = "";
-          this.confirmPassword ="";
+          this.confirmPassword = "";
+          this.checkBox = false;
 
           this.showErrors = false;
         } catch (e) {
