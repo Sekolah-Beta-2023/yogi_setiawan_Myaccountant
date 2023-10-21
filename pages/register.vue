@@ -7,7 +7,6 @@
           <form method="post" @submit.prevent="register">
             <Notification :message="error" v-if="error" />
             <NotificationEmail :message="messageEmail" v-if="messageEmail" />
-
             <div class="field">
               <label class="label">Username</label>
               <div class="control">
@@ -22,11 +21,10 @@
               </div>
               <p class="help is-danger" v-if="nameError">{{ nameError }}</p>
             </div>
-
             <div class="field">
               <label class="label">Phone Number</label>
               <div class="control is-flex">
-                <div class="select" style="width: 40%;">
+                <div class="select" style="width: 40%">
                   <select v-model="selectedCountryCode" required>
                     <option disabled value="">Country ID</option>
                     <option
@@ -45,7 +43,7 @@
                   v-model="contactNumber"
                   required
                   placeholder="Phone Number"
-                  style="width: 60%;"
+                  style="width: 60%"
                 />
               </div>
               <p class="help is-danger" v-if="contactNumberError">
@@ -85,6 +83,23 @@
               </p>
             </div>
 
+            <div class="field">
+              <label class="label">Confirm Password</label>
+              <div class="control">
+                <input
+                  type="password"
+                  class="input"
+                  name="password"
+                  v-model="confirmPassword"
+                  required
+                  placeholder="******"
+                />
+              </div>
+              <p class="help is-danger" v-if="passwordError2">
+                {{ passwordError2 }}
+              </p>
+            </div>
+
             <div class="control">
               <button type="submit" class="button is-dark is-fullwidth">
                 Register
@@ -116,6 +131,7 @@ export default {
       contactNumber: "",
       email: "",
       password: "",
+      confirmPassword:"",
       error: null,
       messageEmail: null,
       countryCodes: [
@@ -172,6 +188,18 @@ export default {
       }
       return "";
     },
+
+        passwordError2() {
+      if (this.showErrors && !this.confirmPassword === !this.password) {
+          return "Password and Confirm password must be same !";       
+      }
+      return "";
+    },
+
+
+
+
+
   },
 
   methods: {
@@ -187,6 +215,7 @@ export default {
         /[a-z]/.test(this.password) &&
         /[0-9]/.test(this.password) &&
         /[!@#$%^&*()_+-=\[\]{};:'",.<>/?\\|]/.test(this.password) &&
+        this.password === this.confirmPassword &&
         /[0-9]/.test(this.contactNumber)
       ) {
         try {
@@ -215,6 +244,7 @@ export default {
           this.contactNumber = "";
           this.email = "";
           this.password = "";
+          this.confirmPassword ="";
 
           this.showErrors = false;
         } catch (e) {
