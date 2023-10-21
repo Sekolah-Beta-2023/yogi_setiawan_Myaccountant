@@ -132,9 +132,10 @@ export default {
         } else if (
           !/[A-Z]/.test(this.password) ||
           !/[a-z]/.test(this.password) ||
+          !/[0-9]/.test(this.password) ||
           !/[!@#$%^&*()_+-=\[\]{};:'",.<>/?\\|]/.test(this.password)
         ) {
-          return "Password must contain at least one uppercase letter, one lowercase letter, and one symbol from the allowed set.";
+          return "Password must contain at least one uppercase letter, one lowercase letter,one number and one symbol from the allowed set.";
         }
       }
       return "";
@@ -152,6 +153,7 @@ export default {
         this.password.length >= 6 &&
         /[A-Z]/.test(this.password) &&
         /[a-z]/.test(this.password) &&
+        /[0-9]/.test(this.password) &&
         /[!@#$%^&*()_+-=\[\]{};:'",.<>/?\\|]/.test(this.password) &&
         /[0-9]/.test(this.contactNumber)        
       ) {
